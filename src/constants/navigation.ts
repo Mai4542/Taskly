@@ -1,4 +1,4 @@
-import container from '../assets/imgs/Container.png';
+import container from '../assets/imgs/container.png';
 import members from '../assets/imgs/people.png';
 import tasks from '../assets/imgs/checklist.png';
 import details from '../assets/imgs/details.png';
