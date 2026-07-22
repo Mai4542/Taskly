@@ -4,6 +4,7 @@ export const APP_ROUTES = {
   auth: {
     login: '/login',
     signup: '/sign-up',
+    forget_password: '/forget-password'
   },
 
   dashboard: {

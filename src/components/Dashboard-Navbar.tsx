@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { useCurrentUser } from '../hooks/useCurrentUser';
+import { useAuth } from '../hooks/useAuth';
 import { getInitials } from '../utils/getInitials';
 import menu from '../../src/assets/imgs/burger.png';
 
@@ -12,7 +12,7 @@ export default function DashboardNavbar({
   onMenuClick,
   onLogout,
 }: DashboardNavbarProps) {
-  const { user, isLoading } = useCurrentUser();
+  const { user, isLoading } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
