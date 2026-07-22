@@ -1,6 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import type { RootState } from '../store/index';
+import { useAuth } from '../hooks/useAuth';
 import { APP_ROUTES } from '../constants/router';
 
 interface PublicRouteProps {
@@ -8,8 +7,7 @@ interface PublicRouteProps {
 }
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
-  const token = useSelector((state: RootState) => state.auth.token);
-
+  const { token } = useAuth();
   if (token) {
     return <Navigate to={APP_ROUTES.dashboard.projects} replace />;
   }
