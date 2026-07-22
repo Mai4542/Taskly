@@ -15,6 +15,7 @@ export interface SignUpData {
 
 export interface AuthResponse {
   access_token: string;
+  refresh_token: string;
   user: {
     user_metadata: {
       name: string;
@@ -41,11 +42,20 @@ function getAuthHeaders(token: string) {
 async function handleResponse(response: Response) {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      errorData.error_description || errorData.message || 'Error'
-    );
+    const rawMessage =
+      errorData.msg ||
+      errorData.error_description ||
+      errorData.message ||
+      errorData.error ||
+      'Unexpected error';
+    throw new Error(rawMessage);
   }
-  return response.json();
+  const text = await response.text();
+  if (!text) {
+    return undefined;
+  }
+
+  return JSON.parse(text);
 }
 
 export async function loginAPI(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -75,6 +85,15 @@ export async function signUpAPI(data: SignUpData): Promise<AuthResponse> {
   return handleResponse(response);
 }
 
+export async function refreshTokenAPI(refreshToken: string): Promise<AuthResponse> {
+  const response = await fetch(`${BASE_URL}/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  });
+  return handleResponse(response);
+}
+
 export async function logoutAPI(token: string): Promise<void> {
   const response = await fetch(`${BASE_URL}/logout`, {
     method: 'POST',
@@ -82,4 +101,3 @@ export async function logoutAPI(token: string): Promise<void> {
   });
   await handleResponse(response);
 }
-

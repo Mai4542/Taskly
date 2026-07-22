@@ -132,65 +132,68 @@ export default function SignUp() {
         />
       </div>
 
-      <div className="flex items-center space-x-0">
-        <div className="mb-9">
-          <label htmlFor="password" className="block text-neutral-medium label-sm mb-2">
-            PASSWORD
-          </label>
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <>
+      <div className="flex flex-col sm:flex-row gap-4">
+  <div className="mb-9 flex-1">
+    <label htmlFor="password" className="block text-neutral-medium label-sm mb-2">
+      PASSWORD
+    </label>
+
+    <div className="relative">
+      <Controller
+        name="password"
+        control={control}
+        render={({ field }) => (
           <input
+            {...field}
+            type={showPassword ? 'text' : 'password'}
+            id="password"
+            placeholder="Password"
+            className="w-full px-4 py-2 pr-10 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
+          />
+        )}
+      />
+
+      <button
+        type="button"
+        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+        onClick={() => setShowPassword(!showPassword)}
+        aria-label={showPassword ? 'Hide password' : 'Show password'}
+      >
+        {showPassword ? (
+          <img src={eye2} alt="" />
+        ) : (
+          <img src={eye1} alt="" />
+        )}
+      </button>
+    </div>
+
+    {errors.password && (
+      <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+    )}
+  </div>
+
+  {/* CONFIRM PASSWORD */}
+  <div className="mb-4 flex-1">
+    <label htmlFor="confirmPassword" className="block text-neutral-medium label-sm mb-2">
+      CONFIRM PASSWORD
+    </label>
+    <Controller
+      name="confirmPassword"
+      control={control}
+      render={({ field }) => (
+        <input
           {...field}
-          type={showPassword ? 'text' : 'password'}
-          id="password"
-          placeholder="Password"
+          type="password"
+          id="confirmPassword"
           className="w-full px-4 py-2 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
         />
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-        )}
-      </>
-              
-            )}
-          />
-        </div>
-
-        <button
-          type="button"
-          className="relative cursor-pointer right-8 bottom-2 z-10"
-          onClick={() => setShowPassword(!showPassword)}
-        >
-          {showPassword ? (
-            <img src={eye2} alt="Toggle Password Visibility" />
-          ) : (
-            <img src={eye1} alt="Toggle Password Visibility" />
-          )}
-        </button>
-
-        <div className="mb-4">
-          <label htmlFor="confirmPassword" className="block text-neutral-medium label-sm mb-2">
-            CONFIRM PASSWORD
-          </label>
-          <Controller
-            name="confirmPassword"
-            control={control}
-            render={({ field }) => (
-              <input
-                {...field}
-                type="password"
-                id="confirmPassword"
-                className="w-full px-5 py-2 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
-              />
-            )}
-          />
-          <p className="text-red-500 text-[13px] min-h-5">
-            {errors.confirmPassword?.message}
-          </p>
-        </div>
-      </div>
+      )}
+    />
+    <p className="text-red-500 text-[13px] min-h-5">
+      {errors.confirmPassword?.message}
+    </p>
+  </div>
+</div>
 
       <div className="mb-6 flex items-center bg-[#E8EDFF] rounded-sm">
         <PasswordChecklist password={passwordValue} />

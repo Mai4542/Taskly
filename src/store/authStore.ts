@@ -55,21 +55,21 @@ export async function login(credentials: authApi.LoginCredentials, rememberMe: b
 
   try {
     const response = await authApi.loginAPI(credentials);
-    
-    cookies.storeToken(response.access_token, rememberMe);
-    
+
+    cookies.storeToken(response.access_token, response.refresh_token, rememberMe);
+
     const user = extractUserFromResponse(response);
-    
+
     cookies.storeUser(user);
-    
-    updateState({ 
-      token: response.access_token, 
-      user, 
-      isLoading: false 
+
+    updateState({
+      token: response.access_token,
+      user,
+      isLoading: false
     });
-    
+
   } catch (error) {
-    const message = error instanceof Error ? error.message ;
+    const message = error instanceof Error ? error.message : "Error";
     updateState({ isLoading: false, error: message });
     throw error;
   }
@@ -80,39 +80,65 @@ export async function signUp(data: authApi.SignUpData) {
 
   try {
     const response = await authApi.signUpAPI(data);
-    
-    cookies.storeToken(response.access_token, false);
-    
+
+    cookies.storeToken(response.access_token, response.refresh_token, false);
+
     const user = extractUserFromResponse(response);
-    
+
     cookies.storeUser(user);
-    
-    updateState({ 
-      token: response.access_token, 
-      user, 
-      isLoading: false 
+
+    updateState({
+      token: response.access_token,
+      user,
+      isLoading: false
     });
-    
+
   } catch (error) {
-    const message = error instanceof Error ? error.message :'Error';
+    const message = error instanceof Error ? error.message : 'Error';
     updateState({ isLoading: false, error: message });
     throw error;
   }
 }
 
+export async function refreshSession(): Promise<string | null> {
+  const refreshToken = cookies.getRefreshToken();
+
+  if (!refreshToken) {
+    cookies.clearAuth();
+    updateState({ token: null, user: null });
+    return null;
+  }
+
+  try {
+    const response = await authApi.refreshTokenAPI(refreshToken);
+
+    cookies.storeToken(response.access_token, response.refresh_token, true);
+
+    updateState({ token: response.access_token });
+    return response.access_token;
+
+  } catch (error) {
+    // الـ refresh_token نفسه باطل أو منتهي -> الجلسة خلصت فعليًا
+    cookies.clearAuth();
+    updateState({ token: null, user: null });
+    return null;
+  }
+}
+
 export async function logout() {
   const token = state.token;
-
   if (token) {
     try {
       await authApi.logoutAPI(token);
     } catch (error) {
-      console.error('Error : ', error);
+      const message = error instanceof Error ? error.message : 'Logout failed, please try again.';
+      updateState({ error: message });
+      throw error;
     }
   }
 
   cookies.clearAuth();
-  updateState({ token: null, user: null });
+  updateState({ token: null, user: null, error: null });
 }
 
 export function clearError() {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom'; 
 import { useAuth } from '../hooks/useAuth';
 import Sidebar from '../components/Sidebar';
 import DashboardNavbar from '../components/Dashboard-Navbar';
@@ -8,6 +8,7 @@ const COLLAPSE_STORAGE_KEY = 'taskly:sidebar-collapsed';
 
 export default function DashboardLayout() {
   const { logout } = useAuth();
+  const navigate = useNavigate(); 
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem(COLLAPSE_STORAGE_KEY) === 'true',
   );
@@ -18,7 +19,13 @@ export default function DashboardLayout() {
   }, [collapsed]);
 
   async function handleLogout() {
-    await logout();
+    try {
+      await logout();
+      navigate('/login', { replace: true }); 
+    } catch (error) {
+      navigate('/login', { replace: true });
+      console.error('Logout API failed:', error);
+    }
   }
 
   return (

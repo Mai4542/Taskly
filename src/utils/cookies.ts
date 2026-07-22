@@ -1,5 +1,6 @@
-const TOKEN_KEY = 'taskly_token';
-const USER_KEY = 'taskly_user';
+const ACCESS_TOKEN_KEY = 'access_token';
+const REFRESH_TOKEN_KEY = 'refresh_token';
+const USER_KEY = 'user';
 
 function setCookie(name: string, value: string, days?: number): void {
   let cookieString = `${name}=${encodeURIComponent(value)};path=/;SameSite=Lax`;
@@ -31,16 +32,18 @@ function deleteCookie(name: string): void {
   document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
 }
 
-export function storeToken(token: string, rememberMe: boolean): void {
-  if (rememberMe) {
-    setCookie(TOKEN_KEY, token, 30);
-  } else {
-    setCookie(TOKEN_KEY, token);
-  }
+export function storeToken(accessToken: string, refreshToken: string, rememberMe: boolean): void {
+  const days = rememberMe ? 30 : undefined;
+  setCookie(ACCESS_TOKEN_KEY, accessToken, days);
+  setCookie(REFRESH_TOKEN_KEY, refreshToken, days);
 }
 
 export function getToken(): string | null {
-  return getCookie(TOKEN_KEY);
+  return getCookie(ACCESS_TOKEN_KEY);
+}
+
+export function getRefreshToken(): string | null {
+  return getCookie(REFRESH_TOKEN_KEY);
 }
 
 export function storeUser(user: { name: string; jobTitle: string }): void {
@@ -59,6 +62,8 @@ export function getUser(): { name: string; jobTitle: string } | null {
 }
 
 export function clearAuth(): void {
-  deleteCookie(TOKEN_KEY);
+  deleteCookie(ACCESS_TOKEN_KEY);
+  deleteCookie(REFRESH_TOKEN_KEY);
   deleteCookie(USER_KEY);
+
 }
