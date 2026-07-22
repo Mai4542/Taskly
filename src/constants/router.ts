@@ -2,15 +2,15 @@ export const APP_ROUTES = {
   home: '/',
 
   auth: {
-    login: '/auth/login',
-    signup: '/auth/sign-up',
+    login: '/login',
+    signup: '/sign-up',
   },
 
   dashboard: {
-    projects: '/dashboard/projects',
-    project_Epics: '/dashboard/project-epics',
-    project_Taskes: '/dashboard/project-tasks',
-    project_Members: '/dashboard/project-members',
-    project_details: '/dashboard/project-details',
+    projects: '/projects',
+    project_Epics: '/project-epics',
+    project_Taskes: '/project-tasks',
+    project_Members: '/project-members',
+    project_details: '/project-details',
   },
 };
