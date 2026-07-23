@@ -110,3 +110,12 @@ export async function recoverPasswordAPI(email: string): Promise<void> {
   });
   await handleResponse(response);
 }
+
+export async function resetPasswordAPI(accessToken: string, password: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/user`, {
+    method: 'PUT',
+    headers: getAuthHeaders(accessToken),
+    body: JSON.stringify({ password }),
+  });
+  await handleResponse(response);
+}

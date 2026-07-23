@@ -10,6 +10,7 @@ const AuthLayout = lazy(() => import('../layouts/AuthLayout'));
 const SignUp = lazy(() => import('../pages/auth/SignUp'));
 const Login = lazy(() => import('../pages/auth/Login'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgetPassword'))
+const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'))
 const Project = lazy(() => import('../pages/dashboardPages/Projects'));
 const ProjectEpics = lazy(() => import('../pages/dashboardPages/ProjectEpics'));
 const ProjectMembers = lazy(
@@ -58,6 +59,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ForgotPassword />
+          </Suspense>
+        ),
+      },
+      {
+        path: APP_ROUTES.auth.reset_password,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <ResetPassword />
           </Suspense>
         ),
       },

@@ -5,8 +5,8 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../../schemas/login.schema';
 import type { LoginForm } from '../../schemas/login.schema';
-import eye1 from '../../assets/imgs/eye1.png';
-import eye2 from '../../assets/imgs/eye2.png';
+import show from '../../assets/imgs/show.svg';
+import hide from '../../assets/imgs/hide.svg';
 import { APP_ROUTES } from '../../constants/router';
 
 export default function Login() {
@@ -100,9 +100,9 @@ export default function Login() {
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <img src={eye2} alt='show' />
+              <img src={hide} alt='show' />
             ) : (
-              <img src={eye1} alt='hide' />
+              <img src={show} alt='hide' />
             )}
           </button>
         </div>

@@ -3,9 +3,11 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import { RouterProvider } from 'react-router-dom';
 import router from './routes/index';
+import AuthHashRedirect from './components/AuthHashRedirect';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <AuthHashRedirect />
     <RouterProvider router={router} />
   </StrictMode>,
 );
