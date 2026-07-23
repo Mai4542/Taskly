@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom'; 
 import { useAuth } from '../hooks/useAuth';
-import Sidebar from '../components/Sidebar';
-import DashboardNavbar from '../components/Dashboard-Navbar';
+import Sidebar from '../components/dashboard/Sidebar';
+import DashboardNavbar from '../components/dashboard/Navbar';
 
 const COLLAPSE_STORAGE_KEY = 'taskly:sidebar-collapsed';
 

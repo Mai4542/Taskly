@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { getInitials } from '../utils/getInitials';
+import { useAuth } from '../../hooks/useAuth';
+import { getInitials } from '../../utils/getInitials';
 import menu from '../../src/assets/imgs/burger.png';
 
 interface DashboardNavbarProps {

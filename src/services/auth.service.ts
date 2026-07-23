@@ -101,3 +101,12 @@ export async function logoutAPI(token: string): Promise<void> {
   });
   await handleResponse(response);
 }
+
+export async function recoverPasswordAPI(email: string): Promise<void> {
+  const response = await fetch(`${BASE_URL}/recover`, {
+    method: 'POST',
+    headers: getHeaders(),
+    body: JSON.stringify({ email }),
+  });
+  await handleResponse(response);
+}

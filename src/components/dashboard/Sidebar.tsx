@@ -3,7 +3,7 @@ import left from '../assets/imgs/close.png';
 import right from '../assets/imgs/open.png';
 import logoutIcon from '../assets/imgs/logout.png';
 import logo from '../assets/imgs/Logo.png';
-import { NAV_ITEMS } from '../constants/navigation';
+import { NAV_ITEMS } from '../../constants/navigation';
 
 interface SidebarProps {
   collapsed: boolean;
