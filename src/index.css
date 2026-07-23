@@ -87,8 +87,10 @@
   font-size: 14px;
   line-height: 20px;
   color: white;
+  width: 366px;
+  height: 48px;
   font-weight: 600;
-  padding: 10px 24px;
+  padding: 10px 24px; 
   border-radius: 2px;
 }
 
@@ -120,9 +122,9 @@
   border-radius: 4px;
   padding: 13px 16px;
   font-size: 14px;
-  width: 568px;
-  height: 44px;
-  color: var(--color-neutral-low);
+  width: 366px;
+  height: 48px;
+  color: var(--color-extra-grey);
 }
 
 @utility input-error {

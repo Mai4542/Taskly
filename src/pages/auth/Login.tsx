@@ -36,7 +36,7 @@ export default function Login() {
 
   return (
     <form
-      className="max-w-xl mx-auto mt-10 p-16 bg-white rounded-xl shadow-lg"
+      className="max-w-xl mx-auto  p-16 bg-white rounded-xl shadow-lg"
       onSubmit={handleSubmit(onSubmit)}
     >
       <h2 className="headline-lg text-neutral-high text-center">

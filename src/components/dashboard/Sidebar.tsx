@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import left from '../assets/imgs/close.png';
-import right from '../assets/imgs/open.png';
-import logoutIcon from '../assets/imgs/logout.png';
-import logo from '../assets/imgs/Logo.png';
+import left from '../../assets/imgs/close.png';
+import right from '../../assets/imgs/open.png';
+import logoutIcon from '../../assets/imgs/logout.png';
+import logo from '../../assets/imgs/Logo.png';
 import { NAV_ITEMS } from '../../constants/navigation';
 
 interface SidebarProps {
