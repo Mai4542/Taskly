@@ -1,4 +1,4 @@
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addProjectSchema } from '../../schemas/addProject.schema';
@@ -7,15 +7,14 @@ import { useEditProject } from '../../hooks/useEditProject';
 import { APP_ROUTES } from '../../constants/router';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorState from '../../components/common/ErrorState';
-import edit from '../../assets/imgs/addproject.svg'; 
+import edit from '../../assets/imgs/addproject.svg';
 import tip from '../../assets/imgs/tip.svg';
 import tiperror from '../../assets/imgs/errortip.svg';
 
 export default function EditProject() {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { project, fetchStatus, isSaving, saveProject, retry, cancel } =
-    useEditProject(id);
+    useEditProject();
 
   const {
     control,
@@ -40,7 +39,6 @@ export default function EditProject() {
     });
   };
 
-
   if (fetchStatus === 'loading') {
     return (
       <div
@@ -51,7 +49,6 @@ export default function EditProject() {
       </div>
     );
   }
-
 
   if (fetchStatus === 'error') {
     return (
@@ -76,7 +73,6 @@ export default function EditProject() {
       </div>
     );
   }
-
 
   if (fetchStatus === 'success' && !project) {
     return (
@@ -115,7 +111,7 @@ export default function EditProject() {
       <h1 className="headline-lg text-neutral-high mb-6">Edit Project</h1>
 
       <div
-        className="flex items-center justify-center "
+        className="flex items-center justify-center"
         style={{ minHeight: 'calc(100vh - 120px)' }}
       >
         <div className="rounded-xl bg-white shadow-sm overflow-hidden max-w-[672px] w-full">
@@ -128,7 +124,7 @@ export default function EditProject() {
                 Edit Project Details
               </h2>
               <p className="body-md text-neutral-medium">
-                Define the scope and foundational details of your project.
+                Update the scope and foundational details of your project.
               </p>
             </div>
           </div>
@@ -220,7 +216,7 @@ export default function EditProject() {
                 disabled={isSaving}
                 className="btn-primary w-40 h-11"
               >
-                {isSaving ? 'Saving...' : 'Save Changes'}
+                {isSaving ? 'Updating...' : 'Update Project'}
               </button>
             </div>
           </form>
