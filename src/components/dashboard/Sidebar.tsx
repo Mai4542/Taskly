@@ -1,9 +1,9 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useParams } from 'react-router-dom';
 import left from '../../assets/imgs/close.png';
 import right from '../../assets/imgs/open.png';
 import logoutIcon from '../../assets/imgs/logout.png';
 import logo from '../../assets/imgs/Logo.png';
-import { NAV_ITEMS } from '../../constants/navigation';
+import { getNavItems } from '../../constants/navigation';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -29,12 +29,16 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
 }
 
 function NavLinks({ collapsed }: { collapsed?: boolean }) {
+  const { projectId } = useParams<{ projectId: string }>();
+  const navItems = getNavItems(projectId);
+
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3">
-      {NAV_ITEMS.map(({ label, path, icon }) => (
+      {navItems.map(({ label, path, icon }) => (
         <NavLink
           key={path}
           to={path}
+          end={path === '/project'}
           className={({ isActive }) =>
             [
               'flex items-center gap-3 rounded-md py-2.5 transition-colors',
@@ -67,12 +71,12 @@ function BottomActions({
   showCollapseToggle?: boolean;
 }) {
   return (
-    <div className="mt-auto  px-3 py-4 bg-background">
+    <div className="mt-auto px-3 py-4 bg-background">
       {showCollapseToggle && onToggleCollapse && (
         <button
           type="button"
           onClick={onToggleCollapse}
-          className={`flex w-full items-center gap-3 rounded-md py-2.5 text-neutral-medium hover:bg-white ${
+          className={`cursor-pointer flex w-full items-center gap-3 rounded-md py-2.5 text-neutral-medium hover:bg-white ${
             collapsed ? 'justify-center px-0' : 'px-3'
           }`}
         >
@@ -82,7 +86,7 @@ function BottomActions({
             <img src={left} alt="Collapse" className="h-[17px] w-[12px]" />
           )}
           {!collapsed && (
-            <span className="text-[14px] text-primary text-bold!">
+            <span className=" text-[14px] text-primary text-bold!">
               Collapse
             </span>
           )}
@@ -91,7 +95,7 @@ function BottomActions({
       <button
         type="button"
         onClick={onLogout}
-        className={`flex w-full items-center gap-3 rounded-md py-2.5 text-error hover:bg-white ${
+        className={`cursor-pointer flex w-full items-center gap-3 rounded-md py-2.5 text-error hover:bg-white ${
           collapsed ? 'justify-center px-0' : 'px-3'
         }`}
       >
@@ -153,25 +157,33 @@ export default function Sidebar({
         </aside>
       </div>
 
-      {!mobileOpen && (
-        <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-highest bg-white py-2 lg:hidden">
-          {NAV_ITEMS.map(({ shortLabel, path, icon }) => (
-            <NavLink
-              key={path}
-              to={path}
-              className={({ isActive }) =>
-                [
-                  'flex flex-col items-center gap-1 px-2 py-1',
-                  isActive ? 'text-primary-container' : 'text-neutral-medium',
-                ].join(' ')
-              }
-            >
-              <img src={icon} alt={shortLabel || 'icon'} className="h-5 w-5" />
-              <span className="label-sm">{shortLabel}</span>
-            </NavLink>
-          ))}
-        </nav>
-      )}
+      {!mobileOpen && <MobileBottomNav />}
     </>
+  );
+}
+
+function MobileBottomNav() {
+  const { projectId } = useParams<{ projectId: string }>();
+  const navItems = getNavItems(projectId);
+
+  return (
+    <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-highest bg-white py-2 lg:hidden">
+      {navItems.map(({ shortLabel, path, icon }) => (
+        <NavLink
+          key={path}
+          to={path}
+          end={path === '/project'}
+          className={({ isActive }) =>
+            [
+              'flex flex-col items-center gap-1 px-2 py-1',
+              isActive ? 'text-primary-container' : 'text-neutral-medium',
+            ].join(' ')
+          }
+        >
+          <img src={icon} alt={shortLabel || 'icon'} className="h-5 w-5" />
+          <span className="label-sm">{shortLabel}</span>
+        </NavLink>
+      ))}
+    </nav>
   );
 }
