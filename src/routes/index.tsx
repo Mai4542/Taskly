@@ -9,8 +9,8 @@ const Home = lazy(() => import('../pages/Home'));
 const AuthLayout = lazy(() => import('../layouts/AuthLayout'));
 const SignUp = lazy(() => import('../pages/auth/SignUp'));
 const Login = lazy(() => import('../pages/auth/Login'));
-const ForgotPassword = lazy(() => import('../pages/auth/ForgetPassword'))
-const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'))
+const ForgotPassword = lazy(() => import('../pages/auth/ForgetPassword'));
+const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'));
 const Project = lazy(() => import('../pages/dashboardPages/Projects'));
 const AddProject = lazy(() => import('../pages/dashboardPages/AddProject'));
 const ProjectEpics = lazy(() => import('../pages/dashboardPages/ProjectEpics'));
@@ -95,15 +95,15 @@ const router = createBrowserRouter([
         ),
       },
       {
-  path: APP_ROUTES.dashboard.projects.add,
-  element: (
-    <Suspense fallback={<div>Loading...</div>}>
-      <AddProject />
-    </Suspense>
-  ),
-},
+        path: APP_ROUTES.dashboard.projects.add,
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <AddProject />
+          </Suspense>
+        ),
+      },
       {
-        path: APP_ROUTES.dashboard.project_Epics,
+        path: '/project/:projectId/epics',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProjectEpics />
@@ -111,15 +111,15 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: APP_ROUTES.dashboard.project_details,
+        path: '/project/:projectId/tasks',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <ProjectDetails />
+            <ProjectTasks />
           </Suspense>
         ),
       },
       {
-        path: APP_ROUTES.dashboard.project_Members,
+        path: '/project/:projectId/members',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProjectMembers />
@@ -127,10 +127,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: APP_ROUTES.dashboard.project_Taskes,
+        path: '/project/:projectId/edit',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <ProjectTasks />
+            <ProjectDetails />
           </Suspense>
         ),
       },
