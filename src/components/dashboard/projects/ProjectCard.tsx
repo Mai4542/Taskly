@@ -1,9 +1,23 @@
+import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/formatDate';
 import type { Project } from '../../../services/projects.service';
+import { APP_ROUTES } from '../../../constants/router';
 
 export default function ProjectCard({ project }: { project: Project }) {
+  const navigate = useNavigate();
+
   return (
-    <div className="rounded-md  bg-white p-5 flex flex-col gap-3 max-w-78.5 h-55">
+    <div
+      onClick={() => navigate(APP_ROUTES.dashboard.epics(project.id))}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          navigate(APP_ROUTES.dashboard.epics(project.id));
+        }
+      }}
+      className="cursor-pointer rounded-md bg-white p-5 flex flex-col gap-3 w-full h-full min-h-[220px] transition-shadow hover:shadow-md"
+    >
       <h3 className="title-md text-neutral-high line-clamp-1">
         {project.name}
       </h3>
