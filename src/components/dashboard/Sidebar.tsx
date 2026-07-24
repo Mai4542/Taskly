@@ -3,7 +3,8 @@ import left from '../../assets/imgs/close.png';
 import right from '../../assets/imgs/open.png';
 import logoutIcon from '../../assets/imgs/logout.png';
 import logo from '../../assets/imgs/Logo.png';
-import { NAV_ITEMS } from '../../constants/navigation';
+import { getNavItems } from '../../constants/navigation';
+import { useAppSelector } from '../../store/hooks';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -29,9 +30,15 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
 }
 
 function NavLinks({ collapsed }: { collapsed?: boolean }) {
+  const selectedProjectId = useAppSelector(
+    (state) => state.projects.selectedProjectId,
+  );
+
+  const navItems = getNavItems(selectedProjectId);
+
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3">
-      {NAV_ITEMS.map(({ label, path, icon }) => (
+      {navItems.map(({ label, path, icon }) => (
         <NavLink
           key={path}
           to={path}
@@ -109,6 +116,12 @@ export default function Sidebar({
   onCloseMobile,
   onLogout,
 }: SidebarProps) {
+  const selectedProjectId = useAppSelector(
+    (state) => state.projects.selectedProjectId,
+  );
+
+  const navItems = getNavItems(selectedProjectId);
+
   return (
     <>
       <aside
@@ -155,7 +168,7 @@ export default function Sidebar({
 
       {!mobileOpen && (
         <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-highest bg-white py-2 lg:hidden">
-          {NAV_ITEMS.map(({ shortLabel, path, icon }) => (
+          {navItems.map(({ shortLabel, path, icon }) => (
             <NavLink
               key={path}
               to={path}

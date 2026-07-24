@@ -4,20 +4,21 @@ import {
   getProjectsAPI,
   UnauthorizedError,
 } from '../services/projects.service';
-import type { Project } from '../services/projects.service';
+import { useAppDispatch } from '../store/hooks';
+import { setProjects } from '../store/slices/projectsSlice';
 import { APP_ROUTES } from '../constants/router';
 
 type Status = 'loading' | 'success' | 'error';
 
 export function useProjects() {
   const navigate = useNavigate();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const dispatch = useAppDispatch();
   const [status, setStatus] = useState<Status>('loading');
 
   const loadProjects = useCallback(async () => {
     try {
       const data = await getProjectsAPI();
-      setProjects(data);
+      dispatch(setProjects(data));
       setStatus('success');
     } catch (error) {
       if (error instanceof UnauthorizedError) {
@@ -26,7 +27,7 @@ export function useProjects() {
       }
       setStatus('error');
     }
-  }, [navigate]);
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     loadProjects();
@@ -37,5 +38,5 @@ export function useProjects() {
     loadProjects();
   }, [loadProjects]);
 
-  return { projects, status, retry };
+  return { status, retry };
 }

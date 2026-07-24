@@ -18,8 +18,8 @@ const ProjectMembers = lazy(
   () => import('../pages/dashboardPages/ProjectMembers'),
 );
 const ProjectTasks = lazy(() => import('../pages/dashboardPages/ProjectTasks'));
-const ProjectDetails = lazy(
-  () => import('../pages/dashboardPages/ProjectsDetails'),
+const EditProject = lazy(
+  () => import('../pages/dashboardPages/EditProject'),
 );
 const router = createBrowserRouter([
   {
@@ -130,7 +130,7 @@ const router = createBrowserRouter([
         path: '/project/:projectId/edit',
         element: (
           <Suspense fallback={<div>Loading...</div>}>
-            <ProjectDetails />
+            <EditProject />
           </Suspense>
         ),
       },

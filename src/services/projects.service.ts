@@ -59,3 +59,46 @@ export async function createProjectAPI(
   const result = await handleRestResponse(response);
   return Array.isArray(result) ? result[0] : result;
 }
+// أضف هذه الدالة
+export async function getProjectByIdAPI(projectId: string): Promise<Project> {
+  const response = await authorizedFetch(
+    `${REST_BASE_URL}/projects?id=eq.${projectId}&limit=1`,
+    {
+      method: 'GET',
+    },
+  );
+
+  if (response.status === 401) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  const result = await handleRestResponse(response);
+  
+  // بنرجع أول عنصر في الـ array (المشروع المطلوب)
+  if (Array.isArray(result) && result.length > 0) {
+    return result[0];
+  }
+  
+  throw new Error('Project not found');
+}
+
+// ودالة التحديث
+export async function updateProjectAPI(
+  projectId: string,
+  data: CreateProjectData,
+): Promise<Project> {
+  const response = await authorizedFetch(
+    `${REST_BASE_URL}/projects?id=eq.${projectId}`,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+      },
+      body: JSON.stringify(data),
+    },
+  );
+
+  const result = await handleRestResponse(response);
+  return Array.isArray(result) ? result[0] : result;
+}

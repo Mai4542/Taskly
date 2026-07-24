@@ -8,9 +8,12 @@ import ProjectsPagination from '../../components/dashboard/projects/ProjectsPagi
 import { APP_ROUTES } from '../../constants/router';
 import plus from '../../assets/imgs/add2.svg';
 import plus1 from '../../assets/imgs/add.svg';
+import { useAppSelector } from '../../store/hooks';
+
 export default function Projects() {
   const navigate = useNavigate();
-  const { projects, status, retry } = useProjects();
+  const { status, retry } = useProjects();
+  const projects = useAppSelector((state) => state.projects.items); 
 
   return (
     <div>
