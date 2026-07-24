@@ -112,7 +112,7 @@ export default function Sidebar({
   return (
     <>
       <aside
-        className={`hidden shrink-0 flex-col border-r border-surface-highest bg-background transition-[width] duration-200 lg:flex ${
+        className={`hidden shrink-0 flex-col border-r border-surface-highest bg-surface-low! transition-[width] duration-200 lg:flex ${
           collapsed ? 'w-20' : 'w-56'
         }`}
       >

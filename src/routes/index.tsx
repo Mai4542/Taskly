@@ -12,6 +12,7 @@ const Login = lazy(() => import('../pages/auth/Login'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgetPassword'))
 const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'))
 const Project = lazy(() => import('../pages/dashboardPages/Projects'));
+const AddProject = lazy(() => import('../pages/dashboardPages/AddProject'));
 const ProjectEpics = lazy(() => import('../pages/dashboardPages/ProjectEpics'));
 const ProjectMembers = lazy(
   () => import('../pages/dashboardPages/ProjectMembers'),
@@ -83,16 +84,24 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to={APP_ROUTES.dashboard.projects} replace />,
+        element: <Navigate to={APP_ROUTES.dashboard.projects.root} replace />,
       },
       {
-        path: APP_ROUTES.dashboard.projects,
+        path: APP_ROUTES.dashboard.projects.root,
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <Project />
           </Suspense>
         ),
       },
+      {
+  path: APP_ROUTES.dashboard.projects.add,
+  element: (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AddProject />
+    </Suspense>
+  ),
+},
       {
         path: APP_ROUTES.dashboard.project_Epics,
         element: (

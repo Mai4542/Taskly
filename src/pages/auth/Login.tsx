@@ -8,9 +8,11 @@ import type { LoginForm } from '../../schemas/login.schema';
 import show from '../../assets/imgs/show.svg';
 import hide from '../../assets/imgs/hide.svg';
 import { APP_ROUTES } from '../../constants/router';
+import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const { login, isLoading, error, clearError } = useAuth();
+   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -30,6 +32,7 @@ export default function Login() {
     clearError();
     try {
       await login(data, rememberMe);
+      navigate(APP_ROUTES.dashboard.projects.root, { replace: true });
     } catch (err) {
     }
   };

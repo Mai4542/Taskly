@@ -31,7 +31,7 @@ export default function DashboardNavbar({
   }, []);
 
   return (
-    <header className="flex h-16 w-full shrink-0 items-center justify-between border-b border-surface-highest bg-white px-4 sm:px-6">
+    <header className="bg-background! flex h-16 w-full shrink-0 items-center justify-between border-b border-surface-highest bg-white px-4 sm:px-6">
       <div className="flex items-center gap-3 lg:hidden">
         <button type="button" onClick={onMenuClick} aria-label="Open menu">
           <img src={menu} alt="Menu" className="h-[15px] w-[18px]" />

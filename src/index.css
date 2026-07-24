@@ -93,6 +93,25 @@
   padding: 10px 24px; 
   border-radius: 2px;
 }
+.btn-primary:hover {
+  cursor: pointer;
+  background: linear-gradient(100deg, #004DB8, #0066FF);
+  box-shadow: 0 4px 12px rgba(0, 61, 155, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(100deg, #003089, #004DB8);
+}
+
+.btn-primary:disabled {
+  background: #94A3B8;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
 
 @utility btn-secondary {
   background-color: white;
@@ -112,8 +131,24 @@
   line-height: 20px;
   color: #4F5F7B;
   font-weight: 600;
+  
   padding: 10px 24px;
-  border-radius: 2px;
+  width: 100px;
+  height: 40px;
+
+  transition: all 0.2s ease;
+}
+
+.btn-ghost:hover {
+  cursor: pointer;
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
+  color: #334155;
+}
+
+.btn-ghost:active {
+  background-color: #E2E8F0;
+  transform: scale(0.98);
 }
 
 @utility input-default {

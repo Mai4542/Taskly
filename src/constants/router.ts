@@ -9,7 +9,10 @@ export const APP_ROUTES = {
   },
 
   dashboard: {
-    projects: '/projects',
+    projects: {
+      root: '/project',
+      add: '/project/add',
+    },
     project_Epics: '/project-epics',
     project_Taskes: '/project-tasks',
     project_Members: '/project-members',

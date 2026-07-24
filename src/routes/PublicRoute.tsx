@@ -9,7 +9,7 @@ interface PublicRouteProps {
 const PublicRoute = ({ children }: PublicRouteProps) => {
   const { token } = useAuth();
   if (token) {
-    return <Navigate to={APP_ROUTES.dashboard.projects} replace />;
+    return <Navigate to={APP_ROUTES.dashboard.projects.root} replace />;
   }
 
   return <>{children}</>;

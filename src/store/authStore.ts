@@ -118,7 +118,6 @@ export async function refreshSession(): Promise<string | null> {
     return response.access_token;
 
   } catch (error) {
-    // الـ refresh_token نفسه باطل أو منتهي -> الجلسة خلصت فعليًا
     cookies.clearAuth();
     updateState({ token: null, user: null });
     return null;
