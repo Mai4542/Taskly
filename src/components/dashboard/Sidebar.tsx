@@ -76,7 +76,7 @@ function BottomActions({
         <button
           type="button"
           onClick={onToggleCollapse}
-          className={`flex w-full items-center gap-3 rounded-md py-2.5 text-neutral-medium hover:bg-white ${
+          className={`cursor-pointer flex w-full items-center gap-3 rounded-md py-2.5 text-neutral-medium hover:bg-white ${
             collapsed ? 'justify-center px-0' : 'px-3'
           }`}
         >
@@ -86,7 +86,7 @@ function BottomActions({
             <img src={left} alt="Collapse" className="h-[17px] w-[12px]" />
           )}
           {!collapsed && (
-            <span className="text-[14px] text-primary text-bold!">
+            <span className=" text-[14px] text-primary text-bold!">
               Collapse
             </span>
           )}
@@ -95,7 +95,7 @@ function BottomActions({
       <button
         type="button"
         onClick={onLogout}
-        className={`flex w-full items-center gap-3 rounded-md py-2.5 text-error hover:bg-white ${
+        className={`cursor-pointer flex w-full items-center gap-3 rounded-md py-2.5 text-error hover:bg-white ${
           collapsed ? 'justify-center px-0' : 'px-3'
         }`}
       >
