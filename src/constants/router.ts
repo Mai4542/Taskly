@@ -13,9 +13,9 @@ export const APP_ROUTES = {
       root: '/project',
       add: '/project/add',
     },
-    project_Epics: '/project-epics',
-    project_Taskes: '/project-tasks',
-    project_Members: '/project-members',
-    project_details: '/project-details',
+    epics: (projectId: string) => `/project/${projectId}/epics`,
+    tasks: (projectId: string) => `/project/${projectId}/tasks`,
+    members: (projectId: string) => `/project/${projectId}/members`,
+    edit: (projectId: string) => `/project/${projectId}/edit`,
   },
 };

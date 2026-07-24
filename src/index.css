@@ -47,7 +47,7 @@
     font-weight: 800;
     font-size: 56px;
     line-height: 56px;
-    letter-spacing: -3px;
+    letter-spacing: 1.4px;
 }
 @utility headline-lg{
     font-family: var(--font-main);
@@ -78,7 +78,7 @@
     font-weight: 700;
     font-size: 11px;
     line-height: 16px;
-    letter-spacing: 1.1px;
+   
 }
 
 @utility btn-primary {
