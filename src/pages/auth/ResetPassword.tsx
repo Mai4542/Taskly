@@ -11,7 +11,8 @@ import { APP_ROUTES } from '../../constants/router';
 import UpdatePasswordChecklist from '../../components/UpdatePasswordCheckList';
 
 export default function ResetPassword() {
-  const { hasValidToken, isSubmitting, apiError, success, updatePassword } = useResetPassword();
+  const { hasValidToken, isSubmitting, apiError, success, updatePassword } =
+    useResetPassword();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -34,7 +35,9 @@ export default function ResetPassword() {
     return (
       <div className="w-full max-w-[448px]">
         <div className="rounded-xl border border-[#C3C6D626]/20 bg-white shadow-sm p-8 text-center">
-          <h1 className="headline-lg text-neutral-high">Invalid or expired reset link.</h1>
+          <h1 className="headline-lg text-neutral-high">
+            Invalid or expired reset link.
+          </h1>
           <p className="body-md text-neutral-medium mt-2">
             Please request a new password reset link.
           </p>
@@ -74,7 +77,10 @@ export default function ResetPassword() {
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="mt-6">
-          <label htmlFor="password" className="label-sm text-neutral-medium mb-2 block">
+          <label
+            htmlFor="password"
+            className="label-sm text-neutral-medium mb-2 block"
+          >
             NEW PASSWORD
           </label>
           <div className="relative">
@@ -86,7 +92,11 @@ export default function ResetPassword() {
                   {...field}
                   type={showPassword ? 'text' : 'password'}
                   id="password"
-                  className={errors.password ? 'input-error w-full pr-10' : 'input-default w-full pr-10'}
+                  className={
+                    errors.password
+                      ? 'input-error w-full pr-10'
+                      : 'input-default w-full pr-10'
+                  }
                   aria-invalid={!!errors.password}
                 />
               )}
@@ -97,14 +107,23 @@ export default function ResetPassword() {
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              <img src={showPassword ? hide : show} alt="" className="h-4 w-4" />
+              <img
+                src={showPassword ? hide : show}
+                alt=""
+                className="h-4 w-4"
+              />
             </button>
           </div>
           {errors.password && (
-            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+            <p className="mt-1 text-sm text-red-500">
+              {errors.password.message}
+            </p>
           )}
 
-          <label htmlFor="confirmPassword" className="label-sm text-neutral-medium mb-2 mt-4 block">
+          <label
+            htmlFor="confirmPassword"
+            className="label-sm text-neutral-medium mb-2 mt-4 block"
+          >
             CONFIRM PASSWORD
           </label>
           <Controller
@@ -115,13 +134,19 @@ export default function ResetPassword() {
                 {...field}
                 type="password"
                 id="confirmPassword"
-                className={errors.confirmPassword ? 'input-error w-full' : 'input-default w-full'}
+                className={
+                  errors.confirmPassword
+                    ? 'input-error w-full'
+                    : 'input-default w-full'
+                }
                 aria-invalid={!!errors.confirmPassword}
               />
             )}
           />
           {errors.confirmPassword && (
-            <p className="mt-1 text-sm text-red-500">{errors.confirmPassword.message}</p>
+            <p className="mt-1 text-sm text-red-500">
+              {errors.confirmPassword.message}
+            </p>
           )}
 
           <div className="mt-4 rounded-md bg-surface-low p-4">
@@ -144,7 +169,10 @@ export default function ResetPassword() {
         </form>
 
         <div className="mt-4 text-center">
-          <Link to={APP_ROUTES.auth.login} className="body-md text-primary hover:underline">
+          <Link
+            to={APP_ROUTES.auth.login}
+            className="body-md text-primary hover:underline"
+          >
             Back to Log In
           </Link>
         </div>
