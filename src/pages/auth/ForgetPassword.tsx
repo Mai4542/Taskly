@@ -112,7 +112,6 @@ export default function ForgotPassword() {
 
                {submitted && (
   <>
-    {/* نسخة الموبايل: صندوق واحد مدمج، أخضر بالكامل، والسطر جنب بعض */}
     <div className="sm:hidden mt-6">
       <div
         role="status"
@@ -156,7 +155,6 @@ export default function ForgotPassword() {
       </div>
     </div>
 
-    {/* نسخة الديسكتوب: زي ما كانت مكتوبة بالظبط، من غير أي تعديل */}
     <div className="hidden sm:block">
       <hr className="my-6 border-[#C3C6D626]" />
 
