@@ -58,17 +58,9 @@ export default function DashboardNavbar({
             </div>
           ) : (
             <div className="hidden sm:flex sm:flex-col sm:items-end">
-              <span
-                style={{ fontWeight: 700, fontSize: '14px' }}
-                className="text-neutral-high!"
-              >
-                {user?.name}
-              </span>
+              <span className="label-sm text-neutral-high!">{user?.name}</span>
               {user?.jobTitle && (
-                <span
-                  style={{ fontWeight: 700, fontSize: '11px' }}
-                  className="label-sm uppercase tracking-wide text-primary-container"
-                >
+                <span className="label-sm! uppercase tracking-wide text-primary-container">
                   {user.jobTitle}
                 </span>
               )}

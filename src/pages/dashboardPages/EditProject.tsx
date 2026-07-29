@@ -105,7 +105,9 @@ export default function EditProject() {
           PROJECTS
         </Link>
         <span>›</span>
-        <span className="text-primary-container">EDIT PROJECT</span>
+        <span>{project?.name}</span>
+        <span>›</span>
+        <span className="text-primary-container">EDIT</span>
       </nav>
 
       <h1 className="headline-lg text-neutral-high mb-6">Edit Project</h1>

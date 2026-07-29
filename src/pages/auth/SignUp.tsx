@@ -44,13 +44,12 @@ export default function SignUp() {
         name: data.name,
         jobTitle: data.jobTitle,
       });
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   return (
     <form
-      className="max-w-xl mx-auto  p-16 bg-white rounded-xl shadow-lg"
+      className="max-w-xl mx-auto p-16 bg-white rounded-xl shadow-lg"
       onSubmit={handleSubmit(onSubmit)}
     >
       <h2 className="headline-lg text-neutral-high text-center">
@@ -67,7 +66,10 @@ export default function SignUp() {
       )}
 
       <div className="mb-4 mt-10">
-        <label htmlFor="name" className="block text-neutral-medium label-sm mb-2">
+        <label
+          htmlFor="name"
+          className="block text-neutral-medium label-sm mb-2"
+        >
           NAME
         </label>
         <Controller
@@ -92,7 +94,10 @@ export default function SignUp() {
       </div>
 
       <div className="mb-4">
-        <label htmlFor="email" className="block text-neutral-medium label-sm mb-2">
+        <label
+          htmlFor="email"
+          className="block text-neutral-medium label-sm mb-2"
+        >
           EMAIL
         </label>
         <Controller
@@ -114,7 +119,10 @@ export default function SignUp() {
       </div>
 
       <div className="mb-4">
-        <label htmlFor="jobTitle" className="block text-neutral-medium label-sm mb-2">
+        <label
+          htmlFor="jobTitle"
+          className="block text-neutral-medium label-sm mb-2"
+        >
           JOB TITLE <span className="text-extra-grey"> (OPTIONAL) </span>
         </label>
         <Controller
@@ -133,67 +141,75 @@ export default function SignUp() {
       </div>
 
       <div className="flex flex-col sm:flex-row gap-4">
-  <div className="mb-9 flex-1">
-    <label htmlFor="password" className="block text-neutral-medium label-sm mb-2">
-      PASSWORD
-    </label>
+        <div className="mb-9 flex-1">
+          <label
+            htmlFor="password"
+            className="block text-neutral-medium label-sm mb-2"
+          >
+            PASSWORD
+          </label>
 
-    <div className="relative">
-      <Controller
-        name="password"
-        control={control}
-        render={({ field }) => (
-          <input
-            {...field}
-            type={showPassword ? 'text' : 'password'}
-            id="password"
-            placeholder="Password"
-            className="w-full px-4 py-2 pr-10 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
+          <div className="relative">
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <input
+                  {...field}
+                  type={showPassword ? 'text' : 'password'}
+                  id="password"
+                  placeholder="Password"
+                  className="w-full px-4 py-2 pr-10 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
+                />
+              )}
+            />
+
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+              onClick={() => setShowPassword(!showPassword)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? (
+                <img src={hide} alt="" />
+              ) : (
+                <img src={show} alt="" />
+              )}
+            </button>
+          </div>
+
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+
+        {/* CONFIRM PASSWORD */}
+        <div className="mb-4 flex-1">
+          <label
+            htmlFor="confirmPassword"
+            className="block text-neutral-medium label-sm mb-2"
+          >
+            CONFIRM PASSWORD
+          </label>
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <input
+                {...field}
+                type="password"
+                id="confirmPassword"
+                className="w-full px-4 py-2 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
+              />
+            )}
           />
-        )}
-      />
-
-      <button
-        type="button"
-        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
-        onClick={() => setShowPassword(!showPassword)}
-        aria-label={showPassword ? 'Hide password' : 'Show password'}
-      >
-        {showPassword ? (
-          <img src={hide} alt="" />
-        ) : (
-          <img src={show} alt="" />
-        )}
-      </button>
-    </div>
-
-    {errors.password && (
-      <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-    )}
-  </div>
-
-  {/* CONFIRM PASSWORD */}
-  <div className="mb-4 flex-1">
-    <label htmlFor="confirmPassword" className="block text-neutral-medium label-sm mb-2">
-      CONFIRM PASSWORD
-    </label>
-    <Controller
-      name="confirmPassword"
-      control={control}
-      render={({ field }) => (
-        <input
-          {...field}
-          type="password"
-          id="confirmPassword"
-          className="w-full px-4 py-2 bg-surface-highest rounded-sm focus:outline-none focus:ring focus:border-blue-300"
-        />
-      )}
-    />
-    <p className="text-red-500 text-[13px] min-h-5">
-      {errors.confirmPassword?.message}
-    </p>
-  </div>
-</div>
+          <p className="text-red-500 text-[13px] min-h-5">
+            {errors.confirmPassword?.message}
+          </p>
+        </div>
+      </div>
 
       <div className="mb-6 flex items-center bg-[#E8EDFF] rounded-sm">
         <PasswordChecklist password={passwordValue} />
@@ -206,7 +222,10 @@ export default function SignUp() {
       <div className="flex justify-center mt-10">
         <p className="text-neutral-medium text-sm">
           Already have an account?{' '}
-          <Link to={APP_ROUTES.auth.login} className="text-primary title-md text-[14px] hover:underline">
+          <Link
+            to={APP_ROUTES.auth.login}
+            className="text-primary title-md text-[14px] hover:underline"
+          >
             Login
           </Link>
         </p>

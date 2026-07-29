@@ -50,25 +50,11 @@ const PasswordChecklist = ({ password }: { password: string }) => {
   ];
 
   return (
-    <div
-      style={{
-        borderRadius: '8px',
-        padding: '10px 8px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '6px',
-        height: '80px',
-      }}
-    >
+    <div className="rounded-lg px-2 py-[10px] flex flex-col gap-1.5 h-20">
       {checks.map((item, i) => (
-        <div
-          key={i}
-          style={{ display: 'flex', alignItems: 'center', gap: '7px' }}
-        >
+        <div key={i} className="flex items-center gap-[7px]">
           <CheckIcon checked={item.isValid} />
-          <span style={{ color: '#434654', fontSize: '11px' }}>
-            {item.label}
-          </span>
+          <span className="text-[#434654] text-[12px]">{item.label}</span>
         </div>
       ))}
     </div>
