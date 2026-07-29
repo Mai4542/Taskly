@@ -50,13 +50,20 @@ function extractUserFromResponse(response: authApi.AuthResponse): User {
   };
 }
 
-export async function login(credentials: authApi.LoginCredentials, rememberMe: boolean) {
+export async function login(
+  credentials: authApi.LoginCredentials,
+  rememberMe: boolean,
+) {
   updateState({ isLoading: true, error: null });
 
   try {
     const response = await authApi.loginAPI(credentials);
 
-    cookies.storeToken(response.access_token, response.refresh_token, rememberMe);
+    cookies.storeToken(
+      response.access_token,
+      response.refresh_token,
+      rememberMe,
+    );
 
     const user = extractUserFromResponse(response);
 
@@ -65,11 +72,10 @@ export async function login(credentials: authApi.LoginCredentials, rememberMe: b
     updateState({
       token: response.access_token,
       user,
-      isLoading: false
+      isLoading: false,
     });
-
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Error";
+    const message = error instanceof Error ? error.message : 'Error';
     updateState({ isLoading: false, error: message });
     throw error;
   }
@@ -90,9 +96,8 @@ export async function signUp(data: authApi.SignUpData) {
     updateState({
       token: response.access_token,
       user,
-      isLoading: false
+      isLoading: false,
     });
-
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Error';
     updateState({ isLoading: false, error: message });
@@ -116,7 +121,6 @@ export async function refreshSession(): Promise<string | null> {
 
     updateState({ token: response.access_token });
     return response.access_token;
-
   } catch (error) {
     cookies.clearAuth();
     updateState({ token: null, user: null });
@@ -130,7 +134,10 @@ export async function logout() {
     try {
       await authApi.logoutAPI(token);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Logout failed, please try again.';
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Logout failed, please try again.';
       updateState({ error: message });
       throw error;
     }

@@ -70,7 +70,7 @@ export async function updateProjectAPI(
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        'Prefer': 'return=representation',
+        Prefer: 'return=representation',
       },
       body: JSON.stringify(data),
     },
