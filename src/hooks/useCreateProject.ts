@@ -6,7 +6,10 @@ import type { CreateProjectData } from '../services/projects.service';
 export function useCreateProject() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  async function createProject(data: CreateProjectData, onSuccess?: () => void) {
+  async function createProject(
+    data: CreateProjectData,
+    onSuccess?: () => void,
+  ) {
     setIsSubmitting(true);
     try {
       await createProjectAPI(data);

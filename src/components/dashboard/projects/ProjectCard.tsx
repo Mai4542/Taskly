@@ -2,25 +2,36 @@ import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/formatDate';
 import type { Project } from '../../../services/projects.service';
 import { APP_ROUTES } from '../../../constants/router';
-import { useAppDispatch } from '../../../store/hooks';
-import { setSelectedProjectId } from '../../../store/slices/projectsSlice';
 
 export default function ProjectCard({ project }: { project: Project }) {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+
+  const handleCardClick = () => {
+    navigate(APP_ROUTES.dashboard.epics(project.id));
+  };
 
   const handleEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
-    dispatch(setSelectedProjectId(project.id));
     navigate(APP_ROUTES.dashboard.edit(project.id));
   };
 
   return (
-    <div className="rounded-md bg-white p-5 flex flex-col gap-3 max-w-78.5 h-55 relative group">
+    <div
+      onClick={handleCardClick}
+      className="rounded-md bg-white p-5 flex flex-col gap-3 max-w-78.5 h-55 relative group cursor-pointer hover:shadow-md transition-shadow duration-200"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleCardClick();
+        }
+      }}
+    >
       <button
         type="button"
         onClick={handleEdit}
-        className="absolute top-3 right-3 p-2 rounded-lg bg-white border border-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-sm"
+        className="cursor-pointer absolute top-3 right-3 p-2 rounded-lg bg-white border border-gray-200 opacity-0 group-hover:opacity-100 transition-all duration-200 hover:bg-blue-50 hover:border-blue-300 hover:shadow-sm"
         title="Edit Project"
       >
         <svg

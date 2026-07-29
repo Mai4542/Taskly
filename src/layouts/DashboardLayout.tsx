@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import Sidebar from '../components/dashboard/Sidebar';
 import DashboardNavbar from '../components/dashboard/Navbar';
@@ -9,6 +9,8 @@ const COLLAPSE_STORAGE_KEY = 'taskly:sidebar-collapsed';
 export default function DashboardLayout() {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const { projectId } = useParams<{ projectId?: string }>();
+
   const [collapsed, setCollapsed] = useState(
     () => localStorage.getItem(COLLAPSE_STORAGE_KEY) === 'true',
   );
@@ -36,18 +38,19 @@ export default function DashboardLayout() {
         mobileOpen={mobileOpen}
         onCloseMobile={() => setMobileOpen(false)}
         onLogout={handleLogout}
+        selectedProjectId={projectId ?? null}
       />
 
-      <div className="flex min-w-0 flex-1 flex-col ">
+      <div className="flex min-w-0 flex-1 flex-col">
         <DashboardNavbar
           onMenuClick={() => setMobileOpen(true)}
           onLogout={handleLogout}
         />
 
         <main className="flex-1 overflow-y-auto p-4 pb-20 sm:p-6 lg:pb-6 bg-background">
-           <div className="h-full">
-    <Outlet />
-  </div>
+          <div className="h-full">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

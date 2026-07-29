@@ -1,10 +1,9 @@
 import { NavLink } from 'react-router-dom';
-import left from '../../assets/imgs/close.png';
-import right from '../../assets/imgs/open.png';
-import logoutIcon from '../../assets/imgs/logout.png';
-import logo from '../../assets/imgs/Logo.png';
+import left from '../../assets/imgs/left.svg';
+import right from '../../assets/imgs/right.svg';
+import logoutIcon from '../../assets/imgs/Logout.svg';
+import logo from '../../assets/imgs/Logo.svg';
 import { getNavItems } from '../../constants/navigation';
-import { useAppSelector } from '../../store/hooks';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -12,6 +11,7 @@ interface SidebarProps {
   mobileOpen: boolean;
   onCloseMobile: () => void;
   onLogout: () => void;
+  selectedProjectId?: string | null;
 }
 
 function Logo({ collapsed }: { collapsed?: boolean }) {
@@ -29,19 +29,22 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
   );
 }
 
-function NavLinks({ collapsed }: { collapsed?: boolean }) {
-  const selectedProjectId = useAppSelector(
-    (state) => state.projects.selectedProjectId,
-  );
-
+function NavLinks({
+  collapsed,
+  selectedProjectId,
+}: {
+  collapsed?: boolean;
+  selectedProjectId?: string | null;
+}) {
   const navItems = getNavItems(selectedProjectId);
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3">
-      {navItems.map(({ label, path, icon }) => (
+      {navItems.map(({ label, path, icon, end }) => (
         <NavLink
           key={path}
           to={path}
+          end={end}
           className={({ isActive }) =>
             [
               'flex items-center gap-3 rounded-md py-2.5 transition-colors',
@@ -74,7 +77,7 @@ function BottomActions({
   showCollapseToggle?: boolean;
 }) {
   return (
-    <div className="mt-auto  px-3 py-4 bg-background">
+    <div className="mt-auto px-3 py-4 bg-background">
       {showCollapseToggle && onToggleCollapse && (
         <button
           type="button"
@@ -115,11 +118,8 @@ export default function Sidebar({
   mobileOpen,
   onCloseMobile,
   onLogout,
+  selectedProjectId,
 }: SidebarProps) {
-  const selectedProjectId = useAppSelector(
-    (state) => state.projects.selectedProjectId,
-  );
-
   const navItems = getNavItems(selectedProjectId);
 
   return (
@@ -130,7 +130,7 @@ export default function Sidebar({
         }`}
       >
         <Logo collapsed={collapsed} />
-        <NavLinks collapsed={collapsed} />
+        <NavLinks collapsed={collapsed} selectedProjectId={selectedProjectId} />
         <BottomActions
           collapsed={collapsed}
           onToggleCollapse={onToggleCollapse}
@@ -161,7 +161,7 @@ export default function Sidebar({
               </span>
             </div>
           </div>
-          <NavLinks />
+          <NavLinks selectedProjectId={selectedProjectId} />
           <BottomActions onLogout={onLogout} showCollapseToggle={false} />
         </aside>
       </div>

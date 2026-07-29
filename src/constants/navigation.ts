@@ -1,8 +1,8 @@
-import container from '../assets/imgs/container.png';
-import members from '../assets/imgs/people.png';
-import tasks from '../assets/imgs/checklist.png';
-import details from '../assets/imgs/details.png';
-import epics from '../assets/imgs/epics.png';
+import container from '../assets/imgs/projectsIcon.svg';
+import members from '../assets/imgs/MembersIcon.svg';
+import tasks from '../assets/imgs/TasksIcon.svg';
+import details from '../assets/imgs/DetailsIcon.svg';
+import epics from '../assets/imgs/EpicsIcon.svg';
 import { APP_ROUTES } from './router';
 
 export interface NavItem {
@@ -10,6 +10,7 @@ export interface NavItem {
   shortLabel: string;
   path: string;
   icon: string;
+  end?: boolean;
 }
 
 export const getNavItems = (projectId?: string | null): NavItem[] => {
@@ -19,6 +20,7 @@ export const getNavItems = (projectId?: string | null): NavItem[] => {
       shortLabel: 'Projects',
       path: APP_ROUTES.dashboard.projects.root,
       icon: container,
+      end: true,
     },
   ];
 
@@ -29,24 +31,28 @@ export const getNavItems = (projectId?: string | null): NavItem[] => {
         shortLabel: 'Epics',
         path: APP_ROUTES.dashboard.epics(projectId),
         icon: epics,
+        end: true,
       },
       {
         label: 'Project Tasks',
         shortLabel: 'Tasks',
         path: APP_ROUTES.dashboard.tasks(projectId),
         icon: tasks,
+        end: true,
       },
       {
         label: 'Project Members',
         shortLabel: 'Members',
         path: APP_ROUTES.dashboard.members(projectId),
         icon: members,
+        end: true,
       },
       {
         label: 'Project Details',
         shortLabel: 'Details',
         path: APP_ROUTES.dashboard.edit(projectId),
         icon: details,
+        end: true,
       },
     );
   }

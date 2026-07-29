@@ -8,12 +8,10 @@ import ProjectsPagination from '../../components/dashboard/projects/ProjectsPagi
 import { APP_ROUTES } from '../../constants/router';
 import plus from '../../assets/imgs/add2.svg';
 import plus1 from '../../assets/imgs/add.svg';
-import { useAppSelector } from '../../store/hooks';
 
 export default function Projects() {
   const navigate = useNavigate();
-  const { status, retry } = useProjects();
-  const projects = useAppSelector((state) => state.projects.items); 
+  const { projects, status, retry } = useProjects();
 
   return (
     <div>
@@ -48,7 +46,7 @@ export default function Projects() {
 
       {status === 'success' && projects.length > 0 && (
         <>
-          <div className="grid grid-cols-2   md:grid-cols-3 xl:grid-cols-4 gap-6 ">
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
             {projects.map((project) => (
               <ProjectCard key={project.id} project={project} />
             ))}

@@ -6,13 +6,8 @@ import {
   updateProjectAPI,
   UnauthorizedError,
 } from '../services/projects.service';
+import type { Project } from '../services/projects.service';
 import type { CreateProjectData } from '../services/projects.service';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import {
-  setProjects,
-  updateProjectInList,
-  setSelectedProjectId,
-} from '../store/slices/projectsSlice';
 import { APP_ROUTES } from '../constants/router';
 
 type FetchStatus = 'loading' | 'success' | 'error';
@@ -20,15 +15,9 @@ type FetchStatus = 'loading' | 'success' | 'error';
 export function useEditProject() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
-  const project = useAppSelector(
-    (state) => state.projects.items.find((p) => p.id === projectId) ?? null,
-  );
-
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus>(
-    project ? 'success' : 'loading',
-  );
+  const [project, setProject] = useState<Project | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<FetchStatus>('loading');
   const [isSaving, setIsSaving] = useState(false);
 
   const loadProject = useCallback(async () => {
@@ -37,17 +26,11 @@ export function useEditProject() {
       return;
     }
 
-    if (project) {
-      dispatch(setSelectedProjectId(projectId));
-      setFetchStatus('success');
-      return;
-    }
-
     try {
       setFetchStatus('loading');
       const projects = await getProjectsAPI();
-      dispatch(setProjects(projects));
-      dispatch(setSelectedProjectId(projectId));
+      const found = projects.find((p) => p.id === projectId) ?? null;
+      setProject(found);
       setFetchStatus('success');
     } catch (error) {
       if (error instanceof UnauthorizedError) {
@@ -57,7 +40,7 @@ export function useEditProject() {
       setFetchStatus('error');
       toast.error('Failed to load project');
     }
-  }, [projectId, project, navigate, dispatch]);
+  }, [projectId, navigate]);
 
   useEffect(() => {
     loadProject();
@@ -69,7 +52,7 @@ export function useEditProject() {
     setIsSaving(true);
     try {
       const updated = await updateProjectAPI(projectId, data);
-      dispatch(updateProjectInList(updated));
+      setProject(updated);
       toast.success('Project updated successfully');
       navigate(APP_ROUTES.dashboard.projects.root);
     } catch (error) {
@@ -84,13 +67,9 @@ export function useEditProject() {
     navigate(APP_ROUTES.dashboard.projects.root);
   }
 
-  const currentProject = useAppSelector(
-    (state) => state.projects.items.find((p) => p.id === projectId) ?? null,
-  );
-
   return {
-    project: currentProject,
-    fetchStatus: currentProject ? 'success' : fetchStatus,
+    project,
+    fetchStatus,
     isSaving,
     retry: loadProject,
     saveProject,

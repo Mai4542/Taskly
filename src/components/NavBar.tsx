@@ -1,4 +1,4 @@
-import logo from '../../src/assets/imgs/Logo.png';
+import logo from '../../src/assets/imgs/Logo.svg';
 
 const NavBar: React.FC = () => {
   return (
