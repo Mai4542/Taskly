@@ -4,7 +4,7 @@ import { useIsMobile } from '../../hooks/useIsMobile';
 import ProjectCard from '../../components/dashboard/projects/ProjectCard';
 import ProjectsSkeleton from '../../components/dashboard/projects/ProjectsSkeleton';
 import ProjectsEmptyState from '../../components/dashboard/projects/ProjectsEmptyState';
-import ProjectsErrorState from '../../components/dashboard/projects/ProjectsErrorState';
+import ErrorState from '../../components/common/ErrorState';
 import ProjectsPagination from '../../components/dashboard/projects/ProjectsPagination';
 import { APP_ROUTES } from '../../constants/router';
 import plus from '../../assets/imgs/add2.svg';
@@ -66,7 +66,12 @@ export default function Projects() {
 
       {status === 'loading' && <ProjectsSkeleton />}
 
-      {status === 'error' && <ProjectsErrorState onRetry={refetch} />}
+      {status === 'error' && (
+        <ErrorState
+          message="We're having trouble retrieving your projects right now. Please try again in a moment."
+          onRetry={refetch}
+        />
+      )}
 
       {status === 'empty' && <ProjectsEmptyState />}
 

@@ -100,17 +100,17 @@ export default function EditProject() {
       <nav className="flex items-center gap-1.5 label-sm text-neutral-low mb-2">
         <Link
           to={APP_ROUTES.dashboard.projects.root}
-          className="hover:text-neutral-medium"
+          className="hover:text-neutral-medium text-[12px]"
         >
           PROJECTS
         </Link>
         <span>›</span>
         <span>{project?.name}</span>
         <span>›</span>
-        <span className="text-primary-container">EDIT</span>
+        <span className="text-primary-container text-[12px]">EDIT</span>
       </nav>
 
-      <h1 className="headline-lg text-neutral-high mb-6">Edit Project</h1>
+      <h1 className="headline-lg text-neutral-high mb-6 ">Edit Project</h1>
 
       <div
         className="flex items-center justify-center"

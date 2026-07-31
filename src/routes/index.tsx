@@ -18,9 +18,7 @@ const ProjectMembers = lazy(
   () => import('../pages/dashboardPages/ProjectMembers'),
 );
 const ProjectTasks = lazy(() => import('../pages/dashboardPages/ProjectTasks'));
-const EditProject = lazy(
-  () => import('../pages/dashboardPages/EditProject'),
-);
+const EditProject = lazy(() => import('../pages/dashboardPages/EditProject'));
 const router = createBrowserRouter([
   {
     path: APP_ROUTES.home,
