@@ -2,7 +2,10 @@ import { getAuthToken, refreshSession } from '../store/authStore';
 
 const API_KEY = import.meta.env.VITE_API_KEY as string;
 
-export async function authorizedFetch(url: string, options: RequestInit = {}): Promise<Response> {
+export async function authorizedFetch(
+  url: string,
+  options: RequestInit = {},
+): Promise<Response> {
   const token = getAuthToken();
 
   const doFetch = (accessToken: string | null) =>
