@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { useProjects } from '../../hooks/useProjects';
+import { usePagination } from '../../hooks/usePagination';
+import { useIsMobile } from '../../hooks/useIsMobile';
 import ProjectCard from '../../components/dashboard/projects/ProjectCard';
 import ProjectsSkeleton from '../../components/dashboard/projects/ProjectsSkeleton';
 import ProjectsEmptyState from '../../components/dashboard/projects/ProjectsEmptyState';
@@ -11,40 +12,65 @@ import plus1 from '../../assets/imgs/add.svg';
 
 export default function Projects() {
   const navigate = useNavigate();
-  const { projects, status, retry } = useProjects();
+  const isMobile = useIsMobile();
+
+  const {
+    projects,
+    currentPage,
+    totalCount,
+    totalPages,
+    loading,
+    loadingMore,
+    error,
+    setPage,
+    nextPage,
+    prevPage,
+    loadMore,
+    hasNextPage,
+    hasPreviousPage,
+    hasMore,
+    refetch,
+  } = usePagination({ limit: 10, mode: isMobile ? 'infinite' : 'pagination' });
+
+  const status: 'loading' | 'error' | 'empty' | 'success' = loading
+    ? 'loading'
+    : error
+      ? 'error'
+      : projects.length === 0
+        ? 'empty'
+        : 'success';
 
   return (
     <div>
-      {status !== 'error' &&
-        !(status === 'success' && projects.length === 0) && (
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="headline-lg text-neutral-high">Projects</h1>
-              <p className="body-md text-neutral-medium">
-                Manage and curate your projects
-              </p>
-            </div>
-
-            {status === 'success' && projects.length > 0 && (
-              <button
-                type="button"
-                onClick={() => navigate(APP_ROUTES.dashboard.projects.add)}
-                className="btn-primary inline-flex items-center gap-2 shrink-0 w-53.5"
-              >
-                <img src={plus1} alt="add" />
-                Create New Project
-              </button>
-            )}
+      {status !== 'error' && status !== 'empty' && (
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="headline-lg text-neutral-high">Projects</h1>
+            <p className="body-md text-neutral-medium">
+              Manage and curate your projects
+            </p>
           </div>
-        )}
+
+          {status === 'success' && (
+            <button
+              type="button"
+              onClick={() => navigate(APP_ROUTES.dashboard.projects.add)}
+              className="btn-primary inline-flex items-center gap-2 shrink-0 w-53.5"
+            >
+              <img src={plus1} alt="add" />
+              Create New Project
+            </button>
+          )}
+        </div>
+      )}
 
       {status === 'loading' && <ProjectsSkeleton />}
 
-      {status === 'error' && <ProjectsErrorState onRetry={retry} />}
+      {status === 'error' && <ProjectsErrorState onRetry={refetch} />}
 
-      {status === 'success' && projects.length === 0 && <ProjectsEmptyState />}
+      {status === 'empty' && <ProjectsEmptyState />}
 
-      {status === 'success' && projects.length > 0 && (
+      {status === 'success' && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
             {projects.map((project) => (
@@ -71,8 +97,19 @@ export default function Projects() {
 
           <div className="relative bottom-2">
             <ProjectsPagination
-              shown={projects.length}
-              total={projects.length}
+              isMobile={isMobile}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalCount={totalCount}
+              itemsShown={projects.length}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
+              onNext={nextPage}
+              onPrev={prevPage}
+              onSetPage={setPage}
+              hasMore={hasMore}
+              loadingMore={loadingMore}
+              onLoadMore={loadMore}
             />
           </div>
         </>
