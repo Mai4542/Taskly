@@ -54,7 +54,7 @@ export async function getProjectMembersAPI(
   const raw: RawProjectMember[] = text ? JSON.parse(text) : [];
 
   return raw.map((m) => ({
-    id: m.member_id,
+    id: m.user_id,
     name: m.metadata?.name || m.email,
     email: m.email,
     role: m.role,

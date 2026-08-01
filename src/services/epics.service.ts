@@ -8,6 +8,24 @@ export interface CreateEpicPayload {
   deadline?: string | null;
 }
 
+export interface EpicUser {
+  sub: string;
+  name: string;
+  email: string;
+  department: string;
+}
+
+export interface Epic {
+  id: string;
+  epic_id: string;
+  title: string;
+  description?: string | null;
+  deadline?: string | null;
+  created_at: string;
+  created_by: EpicUser;
+  assignee: EpicUser;
+}
+
 const AUTH_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const REST_BASE_URL = AUTH_BASE_URL.replace('/auth/v1', '/rest/v1');
 
@@ -41,4 +59,22 @@ export const createEpic = async (payload: CreateEpicPayload) => {
   }
 
   return null;
+};
+
+export const getProjectEpics = async (projectId: string): Promise<Epic[]> => {
+  const url = `${REST_BASE_URL}/project_epics?project_id=eq.${projectId}`;
+
+  const response = await authorizedFetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch epics (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  return (data ?? []) as Epic[];
 };
