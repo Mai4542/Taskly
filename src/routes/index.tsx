@@ -19,6 +19,7 @@ const ProjectMembers = lazy(
 );
 const ProjectTasks = lazy(() => import('../pages/dashboardPages/ProjectTasks'));
 const EditProject = lazy(() => import('../pages/dashboardPages/EditProject'));
+const CreateEpic = lazy(() => import('../pages/dashboardPages/CreateEpic'));
 const router = createBrowserRouter([
   {
     path: APP_ROUTES.home,
@@ -97,6 +98,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <AddProject />
+          </Suspense>
+        ),
+      },
+      {
+        path: APP_ROUTES.dashboard.createEpic(':projectId'), 
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <CreateEpic />
           </Suspense>
         ),
       },
