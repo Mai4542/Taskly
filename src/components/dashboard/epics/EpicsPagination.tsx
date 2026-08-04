@@ -1,57 +1,67 @@
+import { useState } from 'react';
+import prevIcon from '../../../assets/imgs/left.svg';
+import nextIcon from '../../../assets/imgs/right.svg';
+import { useEpicsPagination } from '../../../hooks/useEpicsPagination';
 interface EpicsPaginationProps {
-  shown: number;
-  total: number;
-  currentPage?: number;
-  totalPages?: number;
+  cardscount: number;
 }
 
-export default function EpicsPagination({
-  shown,
-  total,
-  currentPage = 1,
-  totalPages = 2,
-}: EpicsPaginationProps) {
-  return (
-    <div className="mt-6 mb-15 flex items-center justify-between text-[12px] text-neutral-medium">
-      <span>
-        Showing {shown} of {total} epics
-      </span>
+const EpicsPagination: React.FC<EpicsPaginationProps> = ({ cardscount }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(cardscount / 6);
+  const arrayOfPages = useEpicsPagination(currentPage, totalPages);
 
-      <div className="flex items-center gap-1">
+  return (
+    <div className="my-5 justify-between items-center px-4 py-2 hidden md:flex">
+      <div className="text-[#434654] text-sm">
+        Showing 6 of {cardscount} epics
+      </div>
+      <div className="flex items-center space-x-2">
         <button
-          type="button"
-          className="flex h-7 w-7 items-center justify-center rounded text-neutral-medium hover:bg-surface-low disabled:opacity-40"
-          disabled={currentPage <= 1}
+          className={`flex items-center justify-center px-2 py-1 border-2 rounded-sm border-[#C3C6D64D] w-8 h-8  
+    ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 cursor-pointer'}`}
+          onClick={() => setCurrentPage(currentPage - 1)}
+          disabled={currentPage === 1}
         >
-          ‹
+          <img src={prevIcon} alt="Previous" />
         </button>
 
-        {Array.from({ length: totalPages }).map((_, i) => {
-          const page = i + 1;
-          const isActive = page === currentPage;
-          return (
-            <button
-              key={page}
-              type="button"
-              className={`flex h-7 w-7 items-center justify-center rounded font-semibold ${
-                isActive
-                  ? 'bg-primary-container text-white'
-                  : 'text-neutral-medium hover:bg-surface-low'
-              }`}
-            >
-              {page}
-            </button>
-          );
+        {arrayOfPages.map((page) => {
+          if (page === '...') {
+            return (
+              <button
+                key={page}
+                className="flex items-center justify-center px-2 py-1 border-2 rounded-sm border-[#C3C6D64D] w-8 h-8 cursor-not-allowed opacity-50"
+                disabled={true}
+              >
+                {page}
+              </button>
+            );
+          } else {
+            return (
+              <button
+                key={page}
+                className={`flex items-center justify-center px-2 py-1 border-2 rounded-sm border-[#C3C6D64D] w-8 h-8  
+    ${currentPage === page ? 'bg-[#003D9B] text-white border-[#003D9B]' : 'hover:bg-gray-100 cursor-pointer'}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            );
+          }
         })}
 
         <button
-          type="button"
-          className="flex h-7 w-7 items-center justify-center rounded text-neutral-medium hover:bg-surface-low disabled:opacity-40"
-          disabled={currentPage >= totalPages}
+          className={`flex items-center justify-center px-2 py-1 border-2 rounded-sm border-[#C3C6D64D] w-8 h-8  
+    ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100 cursor-pointer'}`}
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages}
         >
-          ›
+          <img src={nextIcon} alt="Next" />
         </button>
       </div>
     </div>
   );
-}
+};
+
+export default EpicsPagination;

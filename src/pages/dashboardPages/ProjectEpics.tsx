@@ -108,7 +108,7 @@ export default function ProjectEpicsPage() {
             ))}
           </div>
 
-          <EpicsPagination shown={filteredEpics.length} total={epics.length} />
+          <EpicsPagination cardscount={epics.length} />
         </>
       )}
     </div>
