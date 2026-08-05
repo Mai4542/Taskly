@@ -14,8 +14,6 @@ import type { Epic } from '../../types/epic.type';
 import { getProjectEpicsPaginated } from '../../services/epics.service';
 import type { PaginatedResponse } from '../../types/epic.type';
 
-const PAGE_SIZE = 6;
-
 export default function ProjectEpicsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
@@ -29,6 +27,16 @@ export default function ProjectEpicsPage() {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const PAGE_SIZE = isMobile && totalCount > 0 ? totalCount : 6;
 
   const fetchEpics = useCallback(async () => {
     if (!projectId) return;
@@ -55,11 +63,17 @@ export default function ProjectEpicsPage() {
     } finally {
       setLoading(false);
     }
-  }, [projectId, currentPage]);
+  }, [projectId, currentPage, PAGE_SIZE]);
 
   useEffect(() => {
     fetchEpics();
   }, [fetchEpics]);
+
+  useEffect(() => {
+    if (isMobile && totalCount > 0) {
+      setCurrentPage(1);
+    }
+  }, [isMobile, totalCount]);
 
   const filteredEpics = epics.filter(
     (epic) =>
@@ -67,12 +81,14 @@ export default function ProjectEpicsPage() {
       epic.epic_id.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const isEmpty = !loading && !error && epics.length === 0;
+  const isEmpty = !loading && !error && totalCount === 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
   return (
     <div className="min-h-screen bg-background px-8 py-6 ">
       {!isEmpty && (
@@ -119,17 +135,19 @@ export default function ProjectEpicsPage() {
 
       {!loading && !error && epics.length > 0 && (
         <>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 ">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-15">
             {filteredEpics.map((epic) => (
               <EpicCard key={epic.id} epic={epic} />
             ))}
           </div>
 
-          <EpicsPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          {!isMobile && (
+            <EpicsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
         </>
       )}
     </div>
