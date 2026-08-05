@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 import Breadcrumb from '../../components/common/Breadcrumb';
@@ -28,6 +28,7 @@ export default function ProjectEpicsPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const topRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -86,11 +87,11 @@ export default function ProjectEpicsPage() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <div className="min-h-screen bg-background px-8 py-6 ">
+    <div ref={topRef} className="min-h-screen bg-background px-8 py-6 ">
       {!isEmpty && (
         <Breadcrumb
           items={[
