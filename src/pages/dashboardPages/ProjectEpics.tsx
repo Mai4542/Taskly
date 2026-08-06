@@ -13,6 +13,7 @@ import type { Epic } from '../../types/epic.type';
 
 import { getProjectEpicsPaginated } from '../../services/epics.service';
 import type { PaginatedResponse } from '../../types/epic.type';
+import EpicDetailsPopup from '../../components/dashboard/epics/EpicDetailsPopup';
 
 export default function ProjectEpicsPage() {
   const { projectId } = useParams<{ projectId: string }>();
@@ -29,7 +30,8 @@ export default function ProjectEpicsPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
-
+  const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -75,6 +77,16 @@ export default function ProjectEpicsPage() {
       setCurrentPage(1);
     }
   }, [isMobile, totalCount]);
+
+  const handleEpicClick = (epic: Epic) => {
+    setSelectedEpic(epic);
+    setIsPopupOpen(true);
+  };
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedEpic(null);
+  };
 
   const filteredEpics = epics.filter(
     (epic) =>
@@ -138,7 +150,7 @@ export default function ProjectEpicsPage() {
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-15">
             {filteredEpics.map((epic) => (
-              <EpicCard key={epic.id} epic={epic} />
+              <EpicCard key={epic.id} epic={epic} onClick={handleEpicClick} />
             ))}
           </div>
 
@@ -150,6 +162,13 @@ export default function ProjectEpicsPage() {
             />
           )}
         </>
+      )}
+      {isPopupOpen && selectedEpic && (
+        <EpicDetailsPopup
+          projectId={projectId}
+          epicId={selectedEpic.id}
+          onClose={handleClosePopup}
+        />
       )}
     </div>
   );
