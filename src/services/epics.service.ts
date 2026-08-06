@@ -136,3 +136,25 @@ export const getProjectEpicsPaginated = async (
     hasMore: offset + limit < totalCount,
   };
 };
+
+export const getEpicDetails = async (
+  projectId: string,
+  epicId: string,
+): Promise<Epic> => {
+  const url = `${REST_BASE_URL}/project_epics?project_id=eq.${projectId}&id=eq.${epicId}`;
+
+  const response = await authorizedFetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        `Failed to fetch epic details (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  return (data?.[0] ?? null) as Epic;
+};
