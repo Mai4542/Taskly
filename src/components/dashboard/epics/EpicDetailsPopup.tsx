@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import exit from '../../../assets/imgs/exit.svg';
 import link from '../../../assets/imgs/link.svg';
 import epicIcon from '../../../assets/imgs/epicIcon.svg';
@@ -6,10 +7,13 @@ import calendar from '../../../assets/imgs/calender.svg';
 import addblue from '../../../assets/imgs/addblue.svg';
 import { getInitials } from '../../../utils/avatar';
 import list from '../../../assets/imgs/list.svg';
-import Select from 'react-select';
+import Select, { type SingleValue } from 'react-select';
 import { components } from 'react-select';
 import add from '../../../assets/imgs/plussimple.svg';
 import { useEpicDetails } from '../../../hooks/useEpicDetails';
+import { useProjectMembers } from '../../../hooks/useProjectMembers';
+import type { ProjectMember } from '../../../services/members.service';
+import type { EpicUser } from '../../../services/epics.service';
 import userIcon from '../../../assets/imgs/notAssigned.svg';
 
 interface EpicDetailsPopupProps {
@@ -18,8 +22,14 @@ interface EpicDetailsPopupProps {
   onClose: () => void;
 }
 
+interface AssigneeOption {
+  value: string | null;
+  label: string;
+  avatar_url?: string | null;
+}
+
 const customStyles = {
-  control: (provided: React.CSSProperties, state: undefined) => ({
+  control: (provided: React.CSSProperties) => ({
     ...provided,
     border: '1px solid #D7E2FF',
     borderRadius: '0.5rem',
@@ -34,9 +44,16 @@ const customStyles = {
     ...provided,
     display: 'none',
   }),
+  dropdownIndicator: (provided: React.CSSProperties) => ({
+    ...provided,
+    color: '#6B7280',
+    padding: '8px',
+    cursor: 'pointer',
+  }),
   menu: (provided: React.CSSProperties) => ({
     ...provided,
     width: '100%',
+    zIndex: 20,
   }),
 };
 
@@ -45,18 +62,35 @@ const EpicDetailsPopup = ({
   epicId,
   onClose,
 }: EpicDetailsPopupProps) => {
-  const { epic, loading, error, fetchEpicDetails, resetEpicDetails } =
-    useEpicDetails();
+  const {
+    epic,
+    loading,
+    error,
+    fetchEpicDetails,
+    resetEpicDetails,
+    updateEpic,
+  } = useEpicDetails();
+  const { members, status: membersStatus } = useProjectMembers(projectId);
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [isEditingAssignee, setIsEditingAssignee] = useState(false);
 
   useEffect(() => {
     if (projectId && epicId) {
       fetchEpicDetails(projectId, epicId);
     }
-
     return () => {
       resetEpicDetails();
     };
   }, [projectId, epicId]);
+
+  useEffect(() => {
+    if (epic) {
+      setTitle(epic.title || '');
+      setDescription(epic.description || '');
+    }
+  }, [epic]);
 
   const formatDate = (dateString: string | null | undefined) => {
     if (!dateString) return '';
@@ -68,48 +102,95 @@ const EpicDetailsPopup = ({
     });
   };
 
+  const toInputDate = (dateString: string | null | undefined) => {
+    if (!dateString) return '';
+    return new Date(dateString).toISOString().split('T')[0];
+  };
+
   const handleCopyLink = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
   };
 
-  const CustomPlaceholder = (props: any) => {
-    const assignee = epic?.assignee;
+  const handleTitleBlur = () => {
+    const trimmed = title.trim();
+    if (!epic) return;
 
-    return (
-      <components.Placeholder {...props}>
-        <div className="flex flex-row items-center gap-2">
-          {assignee?.name ? (
-            <div className="flex h-6 w-6 items-center justify-center rounded-full title-md bg-[#CDDDFF] font-[700] text-[11px] font-bold text-[#51617E] shrink-0">
-              {getInitials(assignee.name)}
-            </div>
-          ) : (
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
-              <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
-            </div>
-          )}
-          <p className="text-[#041B3C] text-[13px] font-[700] truncate">
-            {assignee?.name || 'Unassigned'}
-          </p>
-        </div>
-      </components.Placeholder>
+    if (!trimmed) {
+      setTitle(epic.title);
+      toast.error('Title cannot be empty.');
+      return;
+    }
+    if (trimmed === epic.title) return;
+
+    updateEpic({ title: trimmed });
+  };
+
+  const handleDescriptionBlur = () => {
+    if (!epic) return;
+    const trimmed = description.trim();
+    if (trimmed === (epic.description || '')) return;
+
+    updateEpic({ description: trimmed || null });
+  };
+
+  const handleAssigneeChange = (option: SingleValue<AssigneeOption>) => {
+    if (!epic) return;
+    setIsEditingAssignee(false);
+
+    const newAssigneeId = option?.value ?? null;
+    if (newAssigneeId === (epic.assignee?.sub ?? null)) return;
+
+    const optimisticAssignee: EpicUser | null = option?.value
+      ? { sub: option.value, name: option.label, email: '', department: '' }
+      : null;
+
+    updateEpic(
+      { assignee_id: newAssigneeId },
+      { assignee: optimisticAssignee },
     );
   };
 
-  const CustomPlaceholder2 = (props: any) => {
-    const deadline = epic?.deadline;
+  const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!epic) return;
+    const newDeadline = e.target.value || null;
+    if (newDeadline === epic.deadline) return;
 
+    updateEpic({ deadline: newDeadline });
+  };
+
+  const assigneeOptions: AssigneeOption[] = [
+    { value: null, label: 'Unassigned' },
+    ...members.map((m: ProjectMember) => ({
+      value: m.id,
+      label: m.name,
+      avatar_url: m.avatar_url,
+    })),
+  ];
+
+  const AssigneeOptionLabel = (props: any) => {
+    const { data } = props;
     return (
-      <components.Placeholder {...props}>
+      <components.Option {...props}>
         <div className="flex flex-row items-center gap-2">
-          <div className="flex items-center justify-center shrink-0">
-            <img src={calendar} alt="Calendar" className="w-3.5 h-3.5" />
-          </div>
-          <p className="text-[#041B3C] text-[14px] font-[500] truncate">
-            {deadline ? formatDate(deadline) : 'No deadline'}
-          </p>
+          {data.value === null ? (
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
+              <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
+            </div>
+          ) : data.avatar_url ? (
+            <img
+              src={data.avatar_url}
+              alt={data.label}
+              className="h-6 w-6 rounded-full object-cover shrink-0"
+            />
+          ) : (
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CDDDFF] font-[700] text-[11px] text-[#51617E] shrink-0">
+              {getInitials(data.label)}
+            </div>
+          )}
+          <span className="truncate">{data.label}</span>
         </div>
-      </components.Placeholder>
+      </components.Option>
     );
   };
 
@@ -188,19 +269,25 @@ const EpicDetailsPopup = ({
           </div>
         </div>
 
-        <div className="mt-3 md:mt-4 border border-[#D7E2FF] p-2 md:p-3 rounded-lg text-[15px] md:text-[20px] font-[700] text-[#041B3C] break-words">
-          {epic.title}
-        </div>
+        <input
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onBlur={handleTitleBlur}
+          className="mt-3 md:mt-4 w-full border border-[#D7E2FF] p-2 md:p-3 rounded-lg text-[15px] md:text-[20px] font-[700] text-[#041B3C] outline-none focus:border-[#0052CC]"
+          placeholder="Epic title"
+        />
 
         <p className="md:hidden mt-4 text-[#041B3C66]/60 text-[10px] font-[700]">
           DESCRIPTION
         </p>
 
-        <div className="mt-2 md:mt-6 border border-[#D7E2FF] rounded-lg p-3 md:p-4 min-h-20 md:min-h-24 max-h-32 md:max-h-40 overflow-y-auto">
-          <p className="text-neutral-high text-[13px] md:text-[16px] font-[400] whitespace-pre-wrap break-words">
-            {epic.description || 'No description provided'}
-          </p>
-        </div>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          onBlur={handleDescriptionBlur}
+          placeholder="No description provided"
+          className="mt-2 md:mt-6 w-full border border-[#D7E2FF] rounded-lg p-3 md:p-4 min-h-20 md:min-h-24 max-h-32 md:max-h-40 overflow-y-auto text-neutral-high text-[13px] md:text-[16px] font-[400] outline-none focus:border-[#0052CC] resize-none"
+        />
 
         <div className="hidden md:block">
           <div className="flex flex-row items-center justify-between mt-8 gap-6">
@@ -209,7 +296,7 @@ const EpicDetailsPopup = ({
                 CREATED BY
               </p>
               <div className="flex flex-row items-center gap-2 min-w-0">
-                <div className="flex h-7 w-7 items-center justify-center rounded-xl title-md bg-[#0052CC] font-[700] text-[11px] font-bold text-white shrink-0">
+                <div className="flex h-7 w-7 items-center justify-center rounded-xl bg-[#0052CC] font-[700] text-[11px] text-white shrink-0">
                   {getInitials(epic.created_by?.name || 'Unknown')}
                 </div>
                 <p className="text-neutral-high text-[14px] font-[500] truncate">
@@ -222,24 +309,88 @@ const EpicDetailsPopup = ({
               <p className="text-[#041B3C66]/60 text-[10px] font-[700]">
                 ASSIGNEE
               </p>
-              <div className="w-full">
+              {isEditingAssignee ? (
                 <Select
+                  autoFocus
+                  defaultMenuIsOpen
+                  isLoading={membersStatus === 'loading'}
+                  noOptionsMessage={() =>
+                    membersStatus === 'error'
+                      ? 'Failed to load members'
+                      : 'No members found'
+                  }
+                  options={assigneeOptions}
+                  defaultValue={
+                    epic.assignee
+                      ? { value: epic.assignee.sub, label: epic.assignee.name }
+                      : { value: null, label: 'Unassigned' }
+                  }
+                  onChange={handleAssigneeChange}
+                  onBlur={() => setIsEditingAssignee(false)}
+                  components={{
+                    Option: AssigneeOptionLabel,
+                    IndicatorSeparator: () => null,
+                    DropdownIndicator: (props) => (
+                      <components.DropdownIndicator {...props}>
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          style={{ display: 'block' }}
+                        >
+                          <path
+                            d="M6 9L12 15L18 9"
+                            stroke="#6B7280"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </components.DropdownIndicator>
+                    ),
+                  }}
                   styles={customStyles}
-                  components={{ Placeholder: CustomPlaceholder }}
-                  className="rounded-lg border border-[#D7E2FF]"
+                  className="w-full"
                 />
-              </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setIsEditingAssignee(true)}
+                  className="w-full flex flex-row items-center gap-2 border border-[#D7E2FF] rounded-lg px-3 py-2 hover:bg-gray-50"
+                >
+                  {epic.assignee?.name ? (
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#CDDDFF] font-[700] text-[11px] text-[#51617E] shrink-0">
+                      {getInitials(epic.assignee.name)}
+                    </div>
+                  ) : (
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
+                      <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
+                    </div>
+                  )}
+                  <p className="text-[#041B3C] text-[13px] font-[700] truncate">
+                    {epic.assignee?.name || 'Unassigned'}
+                  </p>
+                </button>
+              )}
             </div>
 
             <div className="flex flex-col items-start gap-2 min-w-0 w-46.5">
               <p className="text-[#041B3C66]/60 text-[10px] font-[700]">
                 DEADLINE
               </p>
-              <div className="w-full">
-                <Select
-                  styles={customStyles}
-                  components={{ Placeholder: CustomPlaceholder2 }}
-                  className="rounded-lg border border-[#D7E2FF]"
+              <div className="w-full flex flex-row items-center gap-2 border border-[#D7E2FF] rounded-lg px-3 py-2 ">
+                <img
+                  src={calendar}
+                  alt="Calendar"
+                  className="w-3.5 h-3.5 shrink-0"
+                />
+                <input
+                  type="date"
+                  value={toInputDate(epic.deadline)}
+                  onChange={handleDeadlineChange}
+                  className="w-full text-[14px] font-[500] text-[#041B3C] outline-none"
                 />
               </div>
             </div>
@@ -264,7 +415,7 @@ const EpicDetailsPopup = ({
               CREATED BY
             </p>
             <div className="flex flex-row items-center gap-2 min-w-0">
-              <div className="flex h-6 w-6 items-center justify-center rounded-xl title-md bg-[#0052CC] font-[700] text-[10px] font-bold text-white shrink-0">
+              <div className="flex h-6 w-6 items-center justify-center rounded-xl bg-[#0052CC] font-[700] text-[10px] text-white shrink-0">
                 {getInitials(epic.created_by?.name || 'Unknown')}
               </div>
               <p className="text-neutral-high text-[13px] font-[500] truncate">
@@ -277,24 +428,88 @@ const EpicDetailsPopup = ({
             <p className="text-[#041B3C66]/60 text-[10px] font-[700]">
               ASSIGNEE
             </p>
-            <div className="w-full">
+            {isEditingAssignee ? (
               <Select
+                autoFocus
+                defaultMenuIsOpen
+                isLoading={membersStatus === 'loading'}
+                noOptionsMessage={() =>
+                  membersStatus === 'error'
+                    ? 'Failed to load members'
+                    : 'No members found'
+                }
+                options={assigneeOptions}
+                defaultValue={
+                  epic.assignee
+                    ? { value: epic.assignee.sub, label: epic.assignee.name }
+                    : { value: null, label: 'Unassigned' }
+                }
+                onChange={handleAssigneeChange}
+                onBlur={() => setIsEditingAssignee(false)}
+                components={{
+                  Option: AssigneeOptionLabel,
+                  IndicatorSeparator: () => null,
+                  DropdownIndicator: (props) => (
+                    <components.DropdownIndicator {...props}>
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{ display: 'block' }}
+                      >
+                        <path
+                          d="M6 9L12 15L18 9"
+                          stroke="#6B7280"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </components.DropdownIndicator>
+                  ),
+                }}
                 styles={customStyles}
-                components={{ Placeholder: CustomPlaceholder }}
-                className="rounded-lg border border-[#D7E2FF]"
+                className="w-full"
               />
-            </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsEditingAssignee(true)}
+                className="w-full flex flex-row items-center gap-2 border border-[#D7E2FF] rounded-lg px-2 py-1.5 hover:bg-gray-50"
+              >
+                {epic.assignee?.name ? (
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#CDDDFF] font-[700] text-[10px] text-[#51617E] shrink-0">
+                    {getInitials(epic.assignee.name)}
+                  </div>
+                ) : (
+                  <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
+                    <img src={userIcon} alt="User" className="w-3 h-3" />
+                  </div>
+                )}
+                <p className="text-[#041B3C] text-[12px] font-[700] truncate">
+                  {epic.assignee?.name || 'Unassigned'}
+                </p>
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col items-start gap-1.5 min-w-0">
             <p className="text-[#041B3C66]/60 text-[10px] font-[700]">
               DEADLINE
             </p>
-            <div className="w-full">
-              <Select
-                styles={customStyles}
-                components={{ Placeholder: CustomPlaceholder2 }}
-                className="rounded-lg border border-[#D7E2FF]"
+            <div className="w-full flex flex-row items-center gap-1.5 border border-[#D7E2FF] rounded-lg px-2 py-1.5">
+              <img
+                src={calendar}
+                alt="Calendar"
+                className="w-3.5 h-3.5 shrink-0"
+              />
+              <input
+                type="date"
+                value={toInputDate(epic.deadline)}
+                onChange={handleDeadlineChange}
+                className="w-full text-[12px] font-[500] text-[#041B3C] outline-none"
               />
             </div>
           </div>
@@ -318,7 +533,7 @@ const EpicDetailsPopup = ({
               <span className="text-neutral-high text-[15px] md:text-[18px] font-[600]">
                 Tasks
               </span>
-              <span className="absolute right-5 md:hidden text-[#434654] text-[11px] font-[600] bg-[#E0E8FF] rounded-full px-2 py-0.5">
+              <span className="md:hidden text-[#041B3C66]/60 text-[11px] font-[600] bg-[#F1F3FF] rounded-full px-2 py-0.5">
                 0 tasks
               </span>
             </div>
@@ -341,7 +556,7 @@ const EpicDetailsPopup = ({
             </p>
             <button
               type="button"
-              className="btn-primary inline-flex items-center gap-2 shrink-0 px-4 py-2 w-30 lg:w-35"
+              className="btn-primary inline-flex items-center gap-2 shrink-0 px-4 py-2 md:w-30 lg:w-35"
             >
               <img src={add} alt="add" />
               Add Task
