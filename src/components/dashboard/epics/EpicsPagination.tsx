@@ -44,8 +44,8 @@ export default function EpicsPagination({
               <button
                 key={page}
                 className={`flex items-center justify-center px-2 py-1 border-2 rounded-sm border-[#C3C6D64D] w-8 h-8  
-    ${currentPage === page ? 'bg-[#003D9B] text-white border-[#003D9B]' : 'hover:bg-gray-100 cursor-pointer'}`}
-                onClick={() => onPageChange(page)}
+    ${currentPage === Number(page) ? 'bg-[#003D9B] text-white border-[#003D9B]' : 'hover:bg-gray-100 cursor-pointer'}`}
+                onClick={() => onPageChange(Number(page))}
               >
                 {page}
               </button>
