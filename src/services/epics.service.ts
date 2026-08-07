@@ -41,6 +41,13 @@ export interface PaginatedResponse<T> {
   hasMore: boolean;
 }
 
+export interface UpdateEpicPayload {
+  title?: string;
+  description?: string | null;
+  assignee_id?: string | null;
+  deadline?: string | null;
+}
+
 const AUTH_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const REST_BASE_URL = AUTH_BASE_URL.replace('/auth/v1', '/rest/v1');
 
@@ -157,4 +164,33 @@ export const getEpicDetails = async (
 
   const data = await response.json();
   return (data?.[0] ?? null) as Epic;
+};
+
+export const updateEpic = async (
+  epicId: string,
+  payload: UpdateEpicPayload,
+): Promise<Partial<Epic>> => {
+  const url = `${REST_BASE_URL}/epics?id=eq.${epicId}`;
+
+  const response = await authorizedFetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation',
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to update epic (Status: ${response.status})`,
+    );
+  }
+
+  const text = await response.text();
+  if (!text) return {};
+
+  const data = JSON.parse(text);
+  return Array.isArray(data) ? data[0] : data;
 };
