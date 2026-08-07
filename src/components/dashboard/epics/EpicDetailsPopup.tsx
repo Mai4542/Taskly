@@ -9,6 +9,7 @@ import { getInitials } from '../../../utils/avatar';
 import list from '../../../assets/imgs/list.svg';
 import Select, { type SingleValue } from 'react-select';
 import { components } from 'react-select';
+import type { CSSObjectWithLabel } from 'react-select';
 import add from '../../../assets/imgs/plussimple.svg';
 import { useEpicDetails } from '../../../hooks/useEpicDetails';
 import { useProjectMembers } from '../../../hooks/useProjectMembers';
@@ -29,7 +30,7 @@ interface AssigneeOption {
 }
 
 const customStyles = {
-  control: (provided: React.CSSProperties) => ({
+  control: (provided: CSSObjectWithLabel) => ({
     ...provided,
     border: '1px solid #D7E2FF',
     borderRadius: '0.5rem',
@@ -40,17 +41,17 @@ const customStyles = {
       border: '1px solid #D7E2FF',
     },
   }),
-  indicatorSeparator: (provided: React.CSSProperties) => ({
+  indicatorSeparator: (provided: CSSObjectWithLabel) => ({
     ...provided,
     display: 'none',
   }),
-  dropdownIndicator: (provided: React.CSSProperties) => ({
+  dropdownIndicator: (provided: CSSObjectWithLabel) => ({
     ...provided,
     color: '#6B7280',
     padding: '8px',
     cursor: 'pointer',
   }),
-  menu: (provided: React.CSSProperties) => ({
+  menu: (provided: CSSObjectWithLabel) => ({
     ...provided,
     width: '100%',
     zIndex: 20,
@@ -147,7 +148,7 @@ const EpicDetailsPopup = ({
 
     updateEpic(
       { assignee_id: newAssigneeId },
-      { assignee: optimisticAssignee },
+      { assignee: optimisticAssignee || undefined },
     );
   };
 
