@@ -164,7 +164,11 @@ const EpicDetailsPopup = ({
               onClick={handleCopyLink}
               className="p-1.5 md:px-3 md:py-2 flex flex-row items-center gap-1.5 md:gap-2 rounded-full hover:bg-gray-100 cursor-pointer"
             >
-              <img src={link} alt="link" className="w-3.5 h-3.5 md:w-4 md:h-4" />
+              <img
+                src={link}
+                alt="link"
+                className="w-3.5 h-3.5 md:w-4 md:h-4"
+              />
               <p className="text-[11px] md:text-[14px] text-[#434654] font-[500]">
                 Copy link
               </p>
@@ -175,7 +179,11 @@ const EpicDetailsPopup = ({
               onClick={onClose}
               aria-label="Close"
             >
-              <img src={exit} alt="exit" className="w-3 h-3 md:w-3.5 md:h-3.5" />
+              <img
+                src={exit}
+                alt="exit"
+                className="w-3 h-3 md:w-3.5 md:h-3.5"
+              />
             </button>
           </div>
         </div>
