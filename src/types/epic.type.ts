@@ -19,6 +19,9 @@ export interface Epic {
 export interface PaginatedResponse<T> {
   data: T[];
   totalCount: number;
-  page: number;
-  limit: number;
+  currentRange: {
+    start: number;
+    end: number;
+  };
+  hasMore: boolean;
 }
