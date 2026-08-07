@@ -147,7 +147,6 @@ const EpicDetailsPopup = ({
         className="relative w-full max-w-[95%] sm:max-w-[420px] md:max-w-[85%] lg:max-w-[70%] xl:max-w-[900px]
         max-h-[92vh] rounded-lg bg-white p-3 sm:p-4 md:p-6 shadow-lg overflow-y-auto"
       >
-        {/* Header */}
         <div className="flex w-full justify-between items-center gap-2">
           <div className="flex flex-row items-center gap-2 min-w-0">
             <img
@@ -181,25 +180,20 @@ const EpicDetailsPopup = ({
           </div>
         </div>
 
-        {/* Title */}
         <div className="mt-3 md:mt-4 border border-[#D7E2FF] p-2 md:p-3 rounded-lg text-[15px] md:text-[20px] font-[700] text-[#041B3C] break-words">
           {epic.title}
         </div>
 
-        {/* Description label - mobile only, desktop keeps it implicit */}
         <p className="md:hidden mt-4 text-[#041B3C66]/60 text-[10px] font-[700]">
           DESCRIPTION
         </p>
 
-        {/* Description */}
         <div className="mt-2 md:mt-6 border border-[#D7E2FF] rounded-lg p-3 md:p-4 min-h-20 md:min-h-24 max-h-32 md:max-h-40 overflow-y-auto">
           <p className="text-neutral-high text-[13px] md:text-[16px] font-[400] whitespace-pre-wrap break-words">
             {epic.description || 'No description provided'}
           </p>
         </div>
 
-        {/* ===== Meta info - DESKTOP layout ===== */}
-        {/* Row: Created by / Assignee / Deadline, then Created at on its own row */}
         <div className="hidden md:block">
           <div className="flex flex-row items-center justify-between mt-8 gap-6">
             <div className="flex flex-col items-start gap-2 min-w-0">
