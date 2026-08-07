@@ -15,3 +15,10 @@ export interface Epic {
   created_by: EpicUser;
   assignee: EpicUser;
 }
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  totalCount: number;
+  page: number;
+  limit: number;
+}
