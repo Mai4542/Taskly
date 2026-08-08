@@ -46,18 +46,22 @@ export const useEpicDetails = () => {
   const updateEpic = useCallback(
     async (patch: UpdateEpicPayload, optimisticExtra?: Partial<Epic>) => {
       const previousEpic = state.epic;
-      if (!previousEpic) return;
+      if (!previousEpic) return null;
 
-      setState((prev) => ({
-        ...prev,
-        epic: { ...previousEpic, ...patch, ...optimisticExtra } as Epic,
-      }));
+      const optimisticEpic = {
+        ...previousEpic,
+        ...patch,
+        ...optimisticExtra,
+      } as Epic;
+      setState((prev) => ({ ...prev, epic: optimisticEpic }));
 
       try {
         await updateEpicRequest(previousEpic.id, patch);
+        return optimisticEpic;
       } catch (err) {
         setState((prev) => ({ ...prev, epic: previousEpic }));
         toast.error('Failed to update epic. Please try again.');
+        return null;
       }
     },
     [state.epic],

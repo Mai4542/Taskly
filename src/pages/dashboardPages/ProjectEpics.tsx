@@ -80,11 +80,19 @@ export default function ProjectEpicsPage() {
     fetchEpics();
   }, [fetchEpics]);
 
+  const handlePageChange = useCallback(
+    (page: number) => {
+      setSearchParams({ page: page.toString() }, { replace: true });
+      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
+    [setSearchParams],
+  );
+
   useEffect(() => {
-    if (isMobile && totalCount > 0) {
+    if (isMobile && totalCount > 0 && currentPage !== 1) {
       handlePageChange(1);
     }
-  }, [isMobile, totalCount]);
+  }, [isMobile, totalCount, currentPage, handlePageChange]);
 
   const handleEpicClick = (epic: Epic) => {
     setSelectedEpic(epic);
@@ -96,6 +104,15 @@ export default function ProjectEpicsPage() {
     setSelectedEpic(null);
   };
 
+  const handleEpicUpdated = (updated: Epic) => {
+    setEpics((prev) =>
+      prev.map((e) => (e.id === updated.id ? { ...e, ...updated } : e)),
+    );
+    setSelectedEpic((prev) =>
+      prev && prev.id === updated.id ? { ...prev, ...updated } : prev,
+    );
+  };
+
   const filteredEpics = epics.filter(
     (epic) =>
       epic.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -104,11 +121,6 @@ export default function ProjectEpicsPage() {
 
   const isEmpty = !loading && !error && totalCount === 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
-
-  const handlePageChange = (page: number) => {
-    setSearchParams({ page: page.toString() }, { replace: true });
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
 
   return (
     <div ref={topRef} className="min-h-screen bg-background px-8 py-6 ">
@@ -176,6 +188,7 @@ export default function ProjectEpicsPage() {
           projectId={projectId}
           epicId={selectedEpic.id}
           onClose={handleClosePopup}
+          onUpdated={handleEpicUpdated}
         />
       )}
     </div>

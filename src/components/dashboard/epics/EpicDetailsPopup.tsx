@@ -14,13 +14,14 @@ import add from '../../../assets/imgs/plussimple.svg';
 import { useEpicDetails } from '../../../hooks/useEpicDetails';
 import { useProjectMembers } from '../../../hooks/useProjectMembers';
 import type { ProjectMember } from '../../../services/members.service';
-import type { EpicUser } from '../../../services/epics.service';
+import type { Epic, EpicUser } from '../../../services/epics.service';
 import userIcon from '../../../assets/imgs/notAssigned.svg';
 
 interface EpicDetailsPopupProps {
   projectId: string;
   epicId: string;
   onClose: () => void;
+  onUpdated?: (epic: Epic) => void;
 }
 
 interface AssigneeOption {
@@ -62,6 +63,7 @@ const EpicDetailsPopup = ({
   projectId,
   epicId,
   onClose,
+  onUpdated,
 }: EpicDetailsPopupProps) => {
   const {
     epic,
@@ -113,7 +115,7 @@ const EpicDetailsPopup = ({
     navigator.clipboard.writeText(url);
   };
 
-  const handleTitleBlur = () => {
+  const handleTitleBlur = async () => {
     const trimmed = title.trim();
     if (!epic) return;
 
@@ -124,18 +126,20 @@ const EpicDetailsPopup = ({
     }
     if (trimmed === epic.title) return;
 
-    updateEpic({ title: trimmed });
+    const updated = await updateEpic({ title: trimmed });
+    if (updated) onUpdated?.(updated);
   };
 
-  const handleDescriptionBlur = () => {
+  const handleDescriptionBlur = async () => {
     if (!epic) return;
     const trimmed = description.trim();
     if (trimmed === (epic.description || '')) return;
 
-    updateEpic({ description: trimmed || null });
+    const updated = await updateEpic({ description: trimmed || null });
+    if (updated) onUpdated?.(updated);
   };
 
-  const handleAssigneeChange = (option: SingleValue<AssigneeOption>) => {
+  const handleAssigneeChange = async (option: SingleValue<AssigneeOption>) => {
     if (!epic) return;
     setIsEditingAssignee(false);
 
@@ -146,18 +150,22 @@ const EpicDetailsPopup = ({
       ? { sub: option.value, name: option.label, email: '', department: '' }
       : null;
 
-    updateEpic(
+    const updated = await updateEpic(
       { assignee_id: newAssigneeId },
       { assignee: optimisticAssignee || undefined },
     );
+    if (updated) onUpdated?.(updated);
   };
 
-  const handleDeadlineChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDeadlineChange = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     if (!epic) return;
     const newDeadline = e.target.value || null;
     if (newDeadline === epic.deadline) return;
 
-    updateEpic({ deadline: newDeadline });
+    const updated = await updateEpic({ deadline: newDeadline });
+    if (updated) onUpdated?.(updated);
   };
 
   const assigneeOptions: AssigneeOption[] = [
