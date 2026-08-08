@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 
 import Breadcrumb from '../../components/common/Breadcrumb';
 import ErrorState from '../../components/common/ErrorState';
@@ -18,6 +18,7 @@ import EpicDetailsPopup from '../../components/dashboard/epics/EpicDetailsPopup'
 export default function ProjectEpicsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { projects } = useProjects();
   const project = projects.find((p) => p.id === projectId);
 
@@ -26,12 +27,19 @@ export default function ProjectEpicsPage() {
   const [error, setError] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const currentPage = parseInt(searchParams.get('page') || '1');
   const [totalCount, setTotalCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
   const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+
+  useEffect(() => {
+    if (searchParams.has('page')) {
+      window.history.replaceState(null, '', window.location.href);
+    }
+  }, []);
+
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
@@ -74,7 +82,7 @@ export default function ProjectEpicsPage() {
 
   useEffect(() => {
     if (isMobile && totalCount > 0) {
-      setCurrentPage(1);
+      handlePageChange(1);
     }
   }, [isMobile, totalCount]);
 
@@ -98,7 +106,7 @@ export default function ProjectEpicsPage() {
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setSearchParams({ page: page.toString() }, { replace: true });
     topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
