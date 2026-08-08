@@ -1,5 +1,11 @@
 import { useState, useCallback } from 'react';
-import { getEpicDetails, type Epic } from '../services/epics.service';
+import { toast } from 'sonner';
+import {
+  getEpicDetails,
+  updateEpic as updateEpicRequest,
+  type Epic,
+  type UpdateEpicPayload,
+} from '../services/epics.service';
 
 interface UseEpicDetailsState {
   epic: Epic | null;
@@ -37,11 +43,32 @@ export const useEpicDetails = () => {
     setState({ epic: null, loading: false, error: null });
   }, []);
 
+  const updateEpic = useCallback(
+    async (patch: UpdateEpicPayload, optimisticExtra?: Partial<Epic>) => {
+      const previousEpic = state.epic;
+      if (!previousEpic) return;
+
+      setState((prev) => ({
+        ...prev,
+        epic: { ...previousEpic, ...patch, ...optimisticExtra } as Epic,
+      }));
+
+      try {
+        await updateEpicRequest(previousEpic.id, patch);
+      } catch (err) {
+        setState((prev) => ({ ...prev, epic: previousEpic }));
+        toast.error('Failed to update epic. Please try again.');
+      }
+    },
+    [state.epic],
+  );
+
   return {
     epic: state.epic,
     loading: state.loading,
     error: state.error,
     fetchEpicDetails,
     resetEpicDetails,
+    updateEpic,
   };
 };

@@ -163,7 +163,7 @@ export default function ProjectEpicsPage() {
           )}
         </>
       )}
-      {isPopupOpen && selectedEpic && (
+      {isPopupOpen && selectedEpic && projectId && (
         <EpicDetailsPopup
           projectId={projectId}
           epicId={selectedEpic.id}
