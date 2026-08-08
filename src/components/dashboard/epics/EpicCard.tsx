@@ -39,7 +39,7 @@ export default function EpicCard({ epic, onClick }: EpicCardProps) {
 
       <div className="mt-3 flex items-center gap-2">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl title-md bg-[#65DCA4] text-[11px] font-bold text-primary">
-          {getInitials(epic.assignee?.name)}
+          {epic.assignee?.name ? getInitials(epic.assignee.name) : 'NA'}
         </div>
         <div className="flex flex-col leading-tight">
           <span className="label-sm text-[12px]  text-[#434654]">Assignee</span>
