@@ -18,6 +18,7 @@ const ProjectMembers = lazy(() => import('../pages/dashboard/ProjectMembers'));
 const ProjectTasks = lazy(() => import('../pages/dashboard/ProjectTasks'));
 const EditProject = lazy(() => import('../pages/dashboard/EditProject'));
 const CreateEpic = lazy(() => import('../pages/dashboard/CreateEpic'));
+const AddTask = lazy(() => import('../pages/dashboard/AddTask'));
 const router = createBrowserRouter([
   {
     path: APP_ROUTES.home,
@@ -112,6 +113,14 @@ const router = createBrowserRouter([
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <ProjectEpics />
+          </Suspense>
+        ),
+      },
+      {
+        path: APP_ROUTES.dashboard.createTask(':projectId'),
+        element: (
+          <Suspense fallback={<div>Loading...</div>}>
+            <AddTask />
           </Suspense>
         ),
       },

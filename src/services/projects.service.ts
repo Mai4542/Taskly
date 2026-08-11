@@ -143,3 +143,19 @@ export async function paginationProjectsAPI({
     limit,
   };
 }
+
+export async function getProjectAPI(projectId: string): Promise<Project> {
+  const response = await authorizedFetch(
+    `${REST_BASE_URL}/projects?id=eq.${projectId}`,
+    {
+      method: 'GET',
+    },
+  );
+
+  if (response.status === 401) {
+    throw new UnauthorizedError('Unauthorized');
+  }
+
+  const result = await handleRestResponse(response);
+  return Array.isArray(result) ? result[0] : result;
+}
