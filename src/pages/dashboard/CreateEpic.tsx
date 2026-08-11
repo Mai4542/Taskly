@@ -1,8 +1,10 @@
 import { Controller } from 'react-hook-form';
 import { useCreateEpic } from '../../hooks/useCreateEpic';
 import { useProjectMembers } from '../../hooks/useProjectMembers';
+import { useProjects } from '../../hooks/useProjects';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import errortip from '../../assets/imgs/errortip.svg';
+import { APP_ROUTES } from '../../constants/router';
 
 const CreateEpic = () => {
   const {
@@ -17,6 +19,8 @@ const CreateEpic = () => {
   } = useCreateEpic();
 
   const { members } = useProjectMembers(projectId!);
+  const { projects } = useProjects();
+  const project = projects.find((p) => p.id === projectId);
 
   if (!projectId) return <div>Error: No Project ID provided</div>;
 
@@ -25,8 +29,11 @@ const CreateEpic = () => {
       <div className="mb-6">
         <Breadcrumb
           items={[
-            { label: 'Projects', to: '/projects' },
-            { label: 'Project Alpha', to: `/project/${projectId}` },
+            { label: 'Projects', to: APP_ROUTES.dashboard.projects.root },
+            {
+              label: project?.name ?? 'Project',
+              to: `/project/${projectId}`,
+            },
             { label: 'Epics', to: `/project/${projectId}/epics` },
             { label: 'New Epic' },
           ]}
