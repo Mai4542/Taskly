@@ -11,15 +11,13 @@ const SignUp = lazy(() => import('../pages/auth/SignUp'));
 const Login = lazy(() => import('../pages/auth/Login'));
 const ForgotPassword = lazy(() => import('../pages/auth/ForgetPassword'));
 const ResetPassword = lazy(() => import('../pages/auth/ResetPassword'));
-const Project = lazy(() => import('../pages/dashboardPages/Projects'));
-const AddProject = lazy(() => import('../pages/dashboardPages/AddProject'));
-const ProjectEpics = lazy(() => import('../pages/dashboardPages/ProjectEpics'));
-const ProjectMembers = lazy(
-  () => import('../pages/dashboardPages/ProjectMembers'),
-);
-const ProjectTasks = lazy(() => import('../pages/dashboardPages/ProjectTasks'));
-const EditProject = lazy(() => import('../pages/dashboardPages/EditProject'));
-const CreateEpic = lazy(() => import('../pages/dashboardPages/CreateEpic'));
+const Project = lazy(() => import('../pages/dashboard/Projects'));
+const AddProject = lazy(() => import('../pages/dashboard/AddProject'));
+const ProjectEpics = lazy(() => import('../pages/dashboard/ProjectEpics'));
+const ProjectMembers = lazy(() => import('../pages/dashboard/ProjectMembers'));
+const ProjectTasks = lazy(() => import('../pages/dashboard/ProjectTasks'));
+const EditProject = lazy(() => import('../pages/dashboard/EditProject'));
+const CreateEpic = lazy(() => import('../pages/dashboard/CreateEpic'));
 const router = createBrowserRouter([
   {
     path: APP_ROUTES.home,
@@ -102,7 +100,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: APP_ROUTES.dashboard.createEpic(':projectId'), 
+        path: APP_ROUTES.dashboard.createEpic(':projectId'),
         element: (
           <Suspense fallback={<div>Loading...</div>}>
             <CreateEpic />
