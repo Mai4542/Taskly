@@ -41,7 +41,7 @@ export default function Projects() {
         : 'success';
 
   return (
-    <div>
+    <div className="p-6">
       {status !== 'error' && status !== 'empty' && (
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>

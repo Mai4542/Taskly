@@ -16,6 +16,8 @@ import { useProjectMembers } from '../../../hooks/useProjectMembers';
 import type { ProjectMember } from '../../../services/members.service';
 import type { Epic, EpicUser } from '../../../services/epics.service';
 import userIcon from '../../../assets/imgs/notAssigned.svg';
+import { useNavigate } from 'react-router-dom';
+import { APP_ROUTES } from '../../../constants/router';
 
 interface EpicDetailsPopupProps {
   projectId: string;
@@ -74,7 +76,7 @@ const EpicDetailsPopup = ({
     updateEpic,
   } = useEpicDetails();
   const { members, status: membersStatus } = useProjectMembers(projectId);
-
+  const navigate = useNavigate();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
@@ -113,6 +115,12 @@ const EpicDetailsPopup = ({
   const handleCopyLink = () => {
     const url = window.location.href;
     navigator.clipboard.writeText(url);
+  };
+
+  const handleAddTask = () => {
+    navigate(APP_ROUTES.dashboard.createTask(projectId), {
+      state: { epicId },
+    });
   };
 
   const handleTitleBlur = async () => {
@@ -546,7 +554,10 @@ const EpicDetailsPopup = ({
                 0 tasks
               </span>
             </div>
-            <button className="hidden md:flex px-3 py-2 flex-row items-center gap-2 rounded-full hover:bg-gray-100 cursor-pointer">
+            <button
+              onClick={handleAddTask}
+              className="hidden md:flex px-3 py-2 flex-row items-center gap-2 rounded-full hover:bg-gray-100 cursor-pointer"
+            >
               <img src={addblue} alt="add" className="w-4 h-4" />
               <p className="body-md text-[#003D9B] font-[600]">Add Task</p>
             </button>
@@ -565,6 +576,7 @@ const EpicDetailsPopup = ({
             </p>
             <button
               type="button"
+              onClick={handleAddTask}
               className="btn-primary inline-flex items-center gap-2 shrink-0 px-4 py-2 md:w-30 lg:w-35"
             >
               <img src={add} alt="add" />

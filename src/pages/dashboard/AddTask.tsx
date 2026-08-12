@@ -1,27 +1,39 @@
-import { Controller, useForm } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import Select, { type StylesConfig } from 'react-select';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { APP_ROUTES } from '../../constants/router';
-
-const STATUS_OPTIONS = [
-  { value: 'TO_DO', label: 'TO DO' },
-  { value: 'IN_PROGRESS', label: 'IN PROGRESS' },
-  { value: 'BLOCKED', label: 'BLOCKED' },
-  { value: 'IN_REVIEW', label: 'IN REVIEW' },
-  { value: 'READY_FOR_QA', label: 'READY FOR QA' },
-  { value: 'REOPENED', label: 'REOPENED' },
-  { value: 'READY_FOR_PRODUCTION', label: 'READY FOR PRODUCTION' },
-  { value: 'DONE', label: 'DONE' },
-];
-
-const MEMBER_OPTIONS = [];
-
-const EPIC_OPTIONS = [];
+import { useProject } from '../../hooks/useProject';
+import { useProjectMembers } from '../../hooks/useProjectMembers';
+import { useEpics } from '../../hooks/useEpics';
+import { useCreateTask } from '../../hooks/useCreateTask';
+import type { TaskStatus } from '../../services/tasks.service';
 
 interface OptionType {
   value: string;
   label: string;
 }
+
+const STATUS_VALUES: TaskStatus[] = [
+  'TO_DO',
+  'IN_PROGRESS',
+  'BLOCKED',
+  'IN_REVIEW',
+  'READY_FOR_QA',
+  'REOPENED',
+  'READY_FOR_PRODUCTION',
+  'DONE',
+];
+
+// TO_DO -> TO DO (عرض بدون underscore)
+const formatStatusLabel = (status: string) => status.replace(/_/g, ' ');
+
+const STATUS_OPTIONS: OptionType[] = STATUS_VALUES.map((value) => ({
+  value,
+  label: formatStatusLabel(value),
+}));
+
+const truncate = (text: string, max = 100) =>
+  text.length > max ? `${text.slice(0, max)}...` : text;
 
 const selectStyles: StylesConfig<OptionType, false> = {
   control: (base, state) => ({
@@ -34,40 +46,46 @@ const selectStyles: StylesConfig<OptionType, false> = {
     cursor: 'pointer',
     '&:hover': { border: 'none' },
   }),
-  valueContainer: (base) => ({
-    ...base,
-    padding: '0 16px',
-  }),
-  placeholder: (base) => ({
-    ...base,
-    color: '#434654',
-  }),
-  singleValue: (base) => ({
-    ...base,
-    color: '#1f2937',
-  }),
+  valueContainer: (base) => ({ ...base, padding: '0 16px' }),
+  placeholder: (base) => ({ ...base, color: '#434654' }),
+  singleValue: (base) => ({ ...base, color: '#1f2937' }),
   indicatorSeparator: () => ({ display: 'none' }),
-  menu: (base) => ({
-    ...base,
-    zIndex: 20,
-  }),
+  menu: (base) => ({ ...base, zIndex: 20 }),
 };
 
 const AddTask = () => {
-  const { control } = useForm({
-    defaultValues: {
-      status: 'TO_DO',
-    },
-  });
-  const projectId = 'project-id-placeholder';
+  const {
+    register,
+    control,
+    errors,
+    isSubmitting,
+    submitError,
+    projectId,
+    navigate,
+    onSubmit,
+  } = useCreateTask();
+
+  const { project } = useProject(projectId);
+  const { members } = useProjectMembers(projectId);
+  const { epics } = useEpics(projectId);
+
+  const memberOptions: OptionType[] = members.map((member) => ({
+    value: member.id,
+    label: member.name || member.email,
+  }));
+
+  const epicOptions: OptionType[] = epics.map((epic) => ({
+    value: epic.id,
+    label: `${epic.epic_id} ${truncate(epic.title, 100)}`,
+  }));
 
   return (
-    <div className="pt-10 mx-12 ">
+    <div className="pt-10 mx-12">
       <div className="mb-6">
         <Breadcrumb
           items={[
             { label: 'Projects', to: APP_ROUTES.dashboard.projects.root },
-            { label: 'Project', to: `/project/${projectId}` },
+            { label: project?.name ?? 'Project', to: `/project/${projectId}` },
             { label: 'Tasks', to: `/project/${projectId}/tasks` },
             { label: 'New Task' },
           ]}
@@ -80,16 +98,22 @@ const AddTask = () => {
       </p>
 
       <div className="bg-white px-6 pt-4 rounded-lg shadow-sm border border-surface-low mb-10">
-        <form className="space-y-8">
+        <form className="space-y-8" onSubmit={onSubmit}>
           <div className="flex flex-col gap-2 items-start">
             <label className="label-sm text-neutral-medium block">
               TITLE <span className="text-error">*</span>
             </label>
             <div className="w-full">
               <input
+                {...register('title', { required: 'Title is required' })}
                 placeholder="e.g., Finalize structural schematics"
                 className="input-default w-full"
               />
+              {errors.title && (
+                <span className="text-xs text-error mt-1 block">
+                  {errors.title.message}
+                </span>
+              )}
             </div>
           </div>
 
@@ -103,12 +127,11 @@ const AddTask = () => {
                 control={control}
                 render={({ field }) => (
                   <Select
-                    {...field}
                     options={STATUS_OPTIONS}
                     value={STATUS_OPTIONS.find(
                       (opt) => opt.value === field.value,
                     )}
-                    onChange={(option) => field.onChange(option?.value ?? null)}
+                    onChange={(option) => field.onChange(option?.value)}
                     placeholder="Select status..."
                     styles={selectStyles}
                     isSearchable={false}
@@ -126,11 +149,11 @@ const AddTask = () => {
                 control={control}
                 render={({ field }) => (
                   <Select
-                    {...field}
-                    options={MEMBER_OPTIONS}
-                    value={MEMBER_OPTIONS.find(
-                      (opt) => opt.value === field.value,
-                    )}
+                    options={memberOptions}
+                    value={
+                      memberOptions.find((opt) => opt.value === field.value) ||
+                      null
+                    }
                     onChange={(option) => field.onChange(option?.value ?? null)}
                     placeholder="Select Team Member"
                     styles={selectStyles}
@@ -150,8 +173,10 @@ const AddTask = () => {
               control={control}
               render={({ field }) => (
                 <Select
-                  {...field}
-                  options={EPIC_OPTIONS}
+                  options={epicOptions}
+                  value={
+                    epicOptions.find((opt) => opt.value === field.value) || null
+                  }
                   onChange={(option) => field.onChange(option?.value ?? null)}
                   placeholder="Select Epic Link"
                   styles={selectStyles}
@@ -173,24 +198,31 @@ const AddTask = () => {
               DESCRIPTION
             </label>
             <textarea
+              {...register('description')}
               placeholder="Provide detailed context for this task..."
               className="input-default w-full h-[120px] resize-none pt-3"
               maxLength={500}
             />
           </div>
 
+          {submitError && (
+            <div className="w-full text-error text-sm">{submitError}</div>
+          )}
+
           <div className="flex flex-col-reverse lg:flex-row justify-end items-center gap-4 pt-6 border-t border-surface-low pb-6 mb-15 lg:mb-1">
             <button
               type="button"
-              className="text-neutral-medium w-full lg:w-25 font-medium"
+              onClick={() => navigate(-1)}
+              className="text-neutral-medium w-full lg:w-25 font-medium cursor-pointer hover:bg-black/20 h-12"
             >
               Back
             </button>
             <button
               type="submit"
+              disabled={isSubmitting}
               className="btn-primary w-full lg:w-39 rounded-sm px-8"
             >
-              Create Task
+              {isSubmitting ? 'Creating...' : 'Create Task'}
             </button>
           </div>
         </form>
