@@ -4,13 +4,10 @@ import exit from '../../../assets/imgs/exit.svg';
 import link from '../../../assets/imgs/link.svg';
 import epicIcon from '../../../assets/imgs/epicIcon.svg';
 import calendar from '../../../assets/imgs/calender.svg';
-import addblue from '../../../assets/imgs/addblue.svg';
 import { getInitials } from '../../../utils/avatar';
-import list from '../../../assets/imgs/list.svg';
 import Select, { type SingleValue } from 'react-select';
 import { components } from 'react-select';
 import type { CSSObjectWithLabel } from 'react-select';
-import add from '../../../assets/imgs/plussimple.svg';
 import { useEpicDetails } from '../../../hooks/useEpicDetails';
 import { useProjectMembers } from '../../../hooks/useProjectMembers';
 import type { ProjectMember } from '../../../services/members.service';
@@ -18,6 +15,8 @@ import type { Epic, EpicUser } from '../../../services/epics.service';
 import userIcon from '../../../assets/imgs/notAssigned.svg';
 import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../../constants/router';
+import EpicTaskList from './EpicTaskList';
+import { useEpicTasks } from '../../../hooks/useEpicTasks';
 
 interface EpicDetailsPopupProps {
   projectId: string;
@@ -80,7 +79,11 @@ const EpicDetailsPopup = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
-
+  const {
+    tasks,
+    status: tasksStatus,
+    retry: retryTasks,
+  } = useEpicTasks(epicId, projectId);
   useEffect(() => {
     if (projectId && epicId) {
       fetchEpicDetails(projectId, epicId);
@@ -546,43 +549,28 @@ const EpicDetailsPopup = ({
 
         <div className="flex flex-col gap-3 md:gap-6 mt-6 md:mt-8">
           <div className="flex flex-row justify-between items-center">
-            <div className="flex flex-row items-center gap-2">
-              <span className="text-neutral-high text-[15px] md:text-[18px] font-[600]">
-                Tasks
-              </span>
-              <span className="md:hidden text-[#041B3C66]/60 text-[11px] font-[600] bg-[#F1F3FF] rounded-full px-2 py-0.5">
-                0 tasks
-              </span>
-            </div>
+            <span className="text-neutral-high text-[15px] md:text-[18px] font-[600]">
+              Tasks
+            </span>
+
             <button
               onClick={handleAddTask}
-              className="hidden md:flex px-3 py-2 flex-row items-center gap-2 rounded-full hover:bg-gray-100 cursor-pointer"
+              className="hidden md:flex flex-row items-center gap-1.5 text-[#003D9B] text-[14px] font-[600] hover:underline cursor-pointer"
             >
-              <img src={addblue} alt="add" className="w-4 h-4" />
-              <p className="body-md text-[#003D9B] font-[600]">Add Task</p>
+              <span className="text-base leading-none">+</span> Add Task
             </button>
+
+            <span className="md:hidden text-[#003D9B] text-[11px] font-[700] bg-[#F1F3FF] rounded-full px-3 py-1 uppercase">
+              {tasks.length} {tasks.length === 1 ? 'Task' : 'Tasks'}
+            </span>
           </div>
 
-          <div className="flex flex-col gap-3 md:gap-4 items-center rounded-sm justify-center bg-[#F1F3FF] border-2 md:border-3 border-dashed border-[#C3C6D64D]/70 min-h-40 md:h-62 p-4">
-            <div className="flex flex-col bg-[#D7E2FF] rounded-lg items-center justify-center gap-2 w-10 h-10 md:w-12 md:h-12">
-              <img
-                src={list}
-                alt="List"
-                className="w-4 h-4 md:w-4.5 md:h-4.5"
-              />
-            </div>
-            <p className="text-neutral-high text-[13px] md:text-[16px] font-[500] text-center px-2">
-              No tasks have been added to this epic yet
-            </p>
-            <button
-              type="button"
-              onClick={handleAddTask}
-              className="btn-primary inline-flex items-center gap-2 shrink-0 px-4 py-2 md:w-30 lg:w-35"
-            >
-              <img src={add} alt="add" />
-              Add Task
-            </button>
-          </div>
+          <EpicTaskList
+            tasks={tasks}
+            status={tasksStatus}
+            retry={retryTasks}
+            onAddTask={handleAddTask}
+          />
         </div>
       </div>
     </div>
