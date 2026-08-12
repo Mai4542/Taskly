@@ -31,6 +31,13 @@ export interface CreateTaskPayload {
   due_date?: string | null;
   status?: TaskStatus;
 }
+export interface TaskListItem {
+  id: string;
+  title: string;
+  due_date: string | null;
+  assignee_name?: string | null;
+  assignee_avatar?: string | null;
+}
 
 const AUTH_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const REST_BASE_URL = AUTH_BASE_URL.replace('/auth/v1', '/rest/v1');
@@ -65,4 +72,22 @@ export const createTask = async (payload: CreateTaskPayload): Promise<Task> => {
   const text = await response.text();
   const data = text ? JSON.parse(text) : null;
   return Array.isArray(data) ? data[0] : data;
+};
+
+export const getEpicTasks = async (epicId: string): Promise<TaskListItem[]> => {
+  const url = `${REST_BASE_URL}/project_tasks?epic_id=eq.${epicId}`;
+
+  const response = await authorizedFetch(url, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch tasks (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  return (data ?? []) as TaskListItem[];
 };
