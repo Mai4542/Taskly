@@ -35,8 +35,14 @@ export interface TaskListItem {
   id: string;
   title: string;
   due_date: string | null;
-  assignee_name?: string | null;
-  assignee_avatar?: string | null;
+  status?: string;
+  assignee?: {
+    id: string;
+    name: string;
+    email: string;
+    department: string | null;
+    avatar_url?: string | null;
+  } | null;
 }
 
 const AUTH_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
