@@ -24,7 +24,6 @@ const STATUS_VALUES: TaskStatus[] = [
   'DONE',
 ];
 
-// TO_DO -> TO DO (عرض بدون underscore)
 const formatStatusLabel = (status: string) => status.replace(/_/g, ' ');
 
 const STATUS_OPTIONS: OptionType[] = STATUS_VALUES.map((value) => ({
@@ -190,7 +189,11 @@ const AddTask = () => {
             <label className="label-sm text-neutral-medium block mb-2">
               DUE DATE
             </label>
-            <input type="date" className="input-default w-full" />
+            <input
+              type="date"
+              {...register('due_date')}
+              className="input-default w-full"
+            />
           </div>
 
           <div>
