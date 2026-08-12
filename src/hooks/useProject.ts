@@ -1,29 +1,43 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProjectAPI, UnauthorizedError } from '../services/projects.service';
+import {
+  getProjectAPI,
+  UnauthorizedError,
+  type Project,
+} from '../services/projects.service';
 import { APP_ROUTES } from '../constants/router';
 
 export function useProject(projectId: string | undefined) {
   const navigate = useNavigate();
+  const [project, setProject] = useState<Project | undefined>();
+  const [status, setStatus] = useState<'loading' | 'error' | 'success'>(
+    'loading',
+  );
 
-  const query = useQuery({
-    queryKey: ['project', projectId],
-    queryFn: async () => {
-      try {
-        return await getProjectAPI(projectId as string);
-      } catch (error) {
+  useEffect(() => {
+    if (!projectId) return;
+
+    let cancelled = false;
+    setStatus('loading');
+
+    getProjectAPI(projectId)
+      .then((data) => {
+        if (cancelled) return;
+        setProject(data);
+        setStatus('success');
+      })
+      .catch((error) => {
+        if (cancelled) return;
         if (error instanceof UnauthorizedError) {
           navigate(APP_ROUTES.auth.login, { replace: true });
         }
-        throw error;
-      }
-    },
-    enabled: !!projectId,
-  });
+        setStatus('error');
+      });
 
-  return {
-    project: query.data,
-    status: query.isLoading ? 'loading' : query.isError ? 'error' : 'success',
-    retry: query.refetch,
-  };
+    return () => {
+      cancelled = true;
+    };
+  }, [projectId]);
+
+  return { project, status };
 }
