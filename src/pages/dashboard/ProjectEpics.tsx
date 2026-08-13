@@ -25,7 +25,6 @@ export default function ProjectEpicsPage() {
   const [epics, setEpics] = useState<Epic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [search, setSearch] = useState('');
 
   const currentPage = parseInt(searchParams.get('page') || '1');
   const [totalCount, setTotalCount] = useState(0);
@@ -113,12 +112,6 @@ export default function ProjectEpicsPage() {
     );
   };
 
-  const filteredEpics = epics.filter(
-    (epic) =>
-      epic.title.toLowerCase().includes(search.toLowerCase()) ||
-      epic.epic_id.toLowerCase().includes(search.toLowerCase()),
-  );
-
   const isEmpty = !loading && !error && totalCount === 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -144,8 +137,6 @@ export default function ProjectEpicsPage() {
           <div className="flex items-center gap-3">
             <input
               type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search epics..."
               className="input-default !w-64"
             />
@@ -169,7 +160,7 @@ export default function ProjectEpicsPage() {
       {!loading && !error && epics.length > 0 && (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-15">
-            {filteredEpics.map((epic) => (
+            {epics.map((epic) => (
               <EpicCard key={epic.id} epic={epic} onClick={handleEpicClick} />
             ))}
           </div>
