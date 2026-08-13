@@ -4,6 +4,7 @@ import userIcon from '../../../assets/imgs/notAssigned.svg';
 import list from '../../../assets/imgs/list.svg';
 import add from '../../../assets/imgs/plussimple.svg';
 import type { TaskListItem } from '../../../services/tasks.service';
+import AddNewTaskButton from '../../common/AddNewTaskButton';
 
 interface EpicTaskListProps {
   tasks: TaskListItem[];
@@ -132,14 +133,7 @@ const EpicTaskList = ({
           );
         })}
 
-        <button
-          type="button"
-          onClick={onAddTask}
-          className="flex flex-row items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[#C3C6D64D]/70 py-3 text-neutral-medium text-[13px] font-[600] uppercase hover:bg-gray-50 cursor-pointer"
-        >
-          <img src={add} alt="add" className="w-3.5 h-3.5" />
-          Add New Task
-        </button>
+        <AddNewTaskButton onClick={onAddTask} />
       </div>
 
       <div className="hidden md:block rounded-lg border border-surface-low overflow-hidden">
