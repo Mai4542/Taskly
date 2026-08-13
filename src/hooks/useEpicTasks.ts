@@ -13,7 +13,7 @@ export function useEpicTasks(epicId: string | undefined, projectId: string) {
   const fetchTasks = useCallback(async () => {
     setStatus('loading');
     try {
-      const data = await getEpicTasks(epicId as string, members);
+      const data = await getEpicTasks(epicId as string);
       setTasks(data);
       setStatus('success');
     } catch (err) {
