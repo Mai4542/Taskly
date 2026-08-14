@@ -1,12 +1,14 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { APP_ROUTES } from '../../constants/router';
-import { useCreateTask } from '../../hooks/useCreateTask';
 import { useProject } from '../../hooks/useProject';
+import { useParams } from 'react-router-dom';
 import searchIcon from '../../assets/imgs/search.svg';
 import boardIcon from '../../assets/imgs/board.svg';
 import listIcon from '../../assets/imgs/listview.svg';
 import Select, { type StylesConfig } from 'react-select';
-import { Controller } from 'react-hook-form';
+import BoardView from '../../components/dashboard/tasks/BoardView';
 
 interface OptionType {
   value: string;
@@ -45,18 +47,11 @@ const VIEW_OPTIONS: OptionType[] = [
 ];
 
 export default function ProjectTasks() {
-  const {
-    register,
-    control,
-    errors,
-    isSubmitting,
-    submitError,
-    projectId,
-    navigate,
-    onSubmit,
-  } = useCreateTask();
-
+  const { projectId } = useParams<{ projectId: string }>();
+  const navigate = useNavigate();
   const { project } = useProject(projectId);
+
+  const [view, setView] = useState<OptionType>(VIEW_OPTIONS[0]);
 
   const formatOptionLabel = (option: OptionType) => (
     <div className="flex items-center gap-2">
@@ -66,6 +61,13 @@ export default function ProjectTasks() {
       <span>{option.label}</span>
     </div>
   );
+
+  const handleAddTask = (status: string) => {
+    if (!projectId) return;
+    navigate(APP_ROUTES.dashboard.createTask(projectId), {
+      state: { status },
+    });
+  };
 
   return (
     <div className="pt-10 mx-12">
@@ -78,15 +80,18 @@ export default function ProjectTasks() {
           ]}
         />
       </div>
-      <div className="flex flex-row justify-between items-end min-h-15">
+
+      <div className="flex flex-row justify-between items-end min-h-15 mb-6">
         <div className="flex flex-col justify-between">
           <h1 className="text-neutral-high font-[600] text-[30px] leading-[1.2]">
             Active Workboard
           </h1>
           <p className="text-[#64748B] text-[14px] leading-[1.4]">
-            Curating Project Alpha's production pipeline and milestones.
+            {project?.description ??
+              `Curating ${project?.name ?? 'this project'}'s production pipeline and milestones.`}
           </p>
         </div>
+
         <div className="flex flex-row items-end gap-2">
           <div className="relative">
             <img
@@ -101,25 +106,28 @@ export default function ProjectTasks() {
             />
           </div>
 
-          <Controller
-            name="view"
-            defaultValue="board"
-            control={control}
-            render={({ field }) => (
-              <Select
-                options={VIEW_OPTIONS}
-                value={VIEW_OPTIONS.find((opt) => opt.value === field.value)}
-                onChange={(option) => field.onChange(option?.value)}
-                placeholder="Select view..."
-                styles={selectStyles}
-                isSearchable={false}
-                formatOptionLabel={formatOptionLabel}
-                className="w-48"
-              />
-            )}
+          <Select
+            options={VIEW_OPTIONS}
+            value={view}
+            onChange={(option) => option && setView(option)}
+            placeholder="Select view..."
+            styles={selectStyles}
+            isSearchable={false}
+            formatOptionLabel={formatOptionLabel}
+            className="w-48"
           />
         </div>
       </div>
+
+      {view.value === 'board' && projectId && (
+        <BoardView projectId={projectId} onAddTask={handleAddTask} />
+      )}
+
+      {view.value === 'list' && (
+        <div className="text-neutral-medium text-sm py-10 text-center">
+          List view coming soon.
+        </div>
+      )}
     </div>
   );
 }

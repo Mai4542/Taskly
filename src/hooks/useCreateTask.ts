@@ -12,14 +12,20 @@ export interface TaskFormValues {
   status: TaskStatus;
 }
 
+interface LocationState {
+  epicId?: string;
+  status?: TaskStatus;
+}
+
 export function useCreateTask() {
   const { projectId } = useParams<{ projectId: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const prefilledEpicId =
-    (location.state as { epicId?: string } | null)?.epicId ?? null;
+  const state = location.state as LocationState | null;
+  const prefilledEpicId = state?.epicId ?? null;
+  const prefilledStatus = state?.status ?? 'TO_DO';
 
   const {
     register,
@@ -33,7 +39,7 @@ export function useCreateTask() {
       epic_id: prefilledEpicId,
       assignee_id: null,
       due_date: null,
-      status: 'TO_DO',
+      status: prefilledStatus,
     },
   });
 
