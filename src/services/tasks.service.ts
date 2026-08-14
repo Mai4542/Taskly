@@ -97,3 +97,22 @@ export const getEpicTasks = async (epicId: string): Promise<TaskListItem[]> => {
   const data = await response.json();
   return (data ?? []) as TaskListItem[];
 };
+
+export const getProjectTasksByStatus = async (
+  projectId: string,
+  status: string,
+): Promise<TaskListItem[]> => {
+  const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}&status=eq.${status}`;
+
+  const response = await authorizedFetch(url, { method: 'GET' });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch tasks (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  return (data ?? []) as TaskListItem[];
+};
