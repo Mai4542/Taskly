@@ -19,12 +19,24 @@ const ProjectTasks = lazy(() => import('../pages/dashboard/ProjectTasks'));
 const EditProject = lazy(() => import('../pages/dashboard/EditProject'));
 const CreateEpic = lazy(() => import('../pages/dashboard/CreateEpic'));
 const AddTask = lazy(() => import('../pages/dashboard/AddTask'));
+const AcceptInvitation = lazy(() => import('../pages/AcceptInvitation'));
+
 const router = createBrowserRouter([
   {
     path: APP_ROUTES.home,
     element: (
       <Suspense fallback={<div>Loading...</div>}>
         <Home />
+      </Suspense>
+    ),
+  },
+  {
+    path: APP_ROUTES.invite,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProtectedRoute>
+          <AcceptInvitation />
+        </ProtectedRoute>
       </Suspense>
     ),
   },
@@ -151,4 +163,5 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
 export default router;
