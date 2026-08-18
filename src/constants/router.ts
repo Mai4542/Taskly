@@ -1,5 +1,6 @@
 export const APP_ROUTES = {
   home: '/',
+  invite: '/invite',
 
   auth: {
     login: '/login',
