@@ -26,8 +26,7 @@ const InviteMemberModal = ({
   onClose,
   onSuccess,
 }: InviteMemberModalProps) => {
-  const { inviteMember, isLoading, isSuccess, isError, errorMessage, reset } =
-    useInviteMember();
+  const { inviteMember, isLoading, reset } = useInviteMember();
 
   const {
     register,
