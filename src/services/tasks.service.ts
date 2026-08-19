@@ -33,6 +33,7 @@ export interface CreateTaskPayload {
 }
 export interface TaskListItem {
   id: string;
+  task_id: string;
   title: string;
   due_date: string | null;
   status?: string;
@@ -103,6 +104,24 @@ export const getProjectTasksByStatus = async (
   status: string,
 ): Promise<TaskListItem[]> => {
   const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}&status=eq.${status}`;
+
+  const response = await authorizedFetch(url, { method: 'GET' });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch tasks (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  return (data ?? []) as TaskListItem[];
+};
+
+export const getProjectTasks = async (
+  projectId: string,
+): Promise<TaskListItem[]> => {
+  const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}`;
 
   const response = await authorizedFetch(url, { method: 'GET' });
 
