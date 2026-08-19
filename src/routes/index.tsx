@@ -19,7 +19,7 @@ const ProjectTasks = lazy(() => import('../pages/dashboard/ProjectTasks'));
 const EditProject = lazy(() => import('../pages/dashboard/EditProject'));
 const CreateEpic = lazy(() => import('../pages/dashboard/CreateEpic'));
 const AddTask = lazy(() => import('../pages/dashboard/AddTask'));
-const AcceptInvitation = lazy(() => import('../pages/AcceptInvitation'));
+const AcceptInvitation = lazy(() => import('../pages/Acceptinvitation'));
 
 const router = createBrowserRouter([
   {
