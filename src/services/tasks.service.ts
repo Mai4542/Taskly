@@ -33,9 +33,32 @@ export interface CreateTaskPayload {
 }
 export interface TaskListItem {
   id: string;
+  task_id: string;
   title: string;
   due_date: string | null;
   status?: string;
+  assignee?: {
+    id: string;
+    name: string;
+    email: string;
+    department: string | null;
+    avatar_url?: string | null;
+  } | null;
+}
+
+export interface TaskDetails extends Task {
+  task_id: string;
+  epic?: {
+    id: string;
+    title: string;
+    epic_id: string;
+  } | null;
+  created_by?: {
+    id: string;
+    name: string;
+    email: string;
+    department: string | null;
+  } | null;
   assignee?: {
     id: string;
     name: string;
@@ -115,4 +138,43 @@ export const getProjectTasksByStatus = async (
 
   const data = await response.json();
   return (data ?? []) as TaskListItem[];
+};
+
+export const getProjectTasks = async (
+  projectId: string,
+): Promise<TaskListItem[]> => {
+  const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}`;
+
+  const response = await authorizedFetch(url, { method: 'GET' });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch tasks (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  return (data ?? []) as TaskListItem[];
+};
+
+export const getTaskDetails = async (
+  projectId: string,
+  taskId: string,
+): Promise<TaskDetails | null> => {
+  const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}&id=eq.${taskId}`;
+
+  const response = await authorizedFetch(url, { method: 'GET' });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        `Failed to fetch task details (Status: ${response.status})`,
+    );
+  }
+
+  const data = await response.json();
+  const list = (data ?? []) as TaskDetails[];
+  return list.length > 0 ? list[0] : null;
 };
