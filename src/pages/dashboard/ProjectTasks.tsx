@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { APP_ROUTES } from '../../constants/router';
 import { useProject } from '../../hooks/useProject';
-import { useParams } from 'react-router-dom';
 import searchIcon from '../../assets/imgs/search.svg';
 import boardIcon from '../../assets/imgs/board.svg';
 import listIcon from '../../assets/imgs/listview.svg';
 import Select, { type StylesConfig } from 'react-select';
 import BoardView from '../../components/dashboard/tasks/BoardView';
+import ListView from '../../components/dashboard/tasks/ListView';
+import MobileTaskList from '../../components/dashboard/tasks/MobileTaskList';
 
 interface OptionType {
   value: string;
@@ -50,8 +51,22 @@ export default function ProjectTasks() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { project } = useProject(projectId);
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [view, setView] = useState<OptionType>(VIEW_OPTIONS[0]);
+  const initialView =
+    VIEW_OPTIONS.find((o) => o.value === searchParams.get('view')) ??
+    VIEW_OPTIONS[0];
+
+  const [view, setView] = useState<OptionType>(initialView);
+
+  const handleViewChange = (option: OptionType) => {
+    setView(option);
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set('view', option.value);
+      return params;
+    });
+  };
 
   const formatOptionLabel = (option: OptionType) => (
     <div className="flex items-center gap-2">
@@ -64,14 +79,17 @@ export default function ProjectTasks() {
 
   const handleAddTask = (status: string) => {
     if (!projectId) return;
-    navigate(APP_ROUTES.dashboard.createTask(projectId), {
-      state: { status },
-    });
+    navigate(APP_ROUTES.dashboard.createTask(projectId), { state: { status } });
+  };
+
+  const handleAddTaskFromList = () => {
+    if (!projectId) return;
+    navigate(APP_ROUTES.dashboard.createTask(projectId));
   };
 
   return (
-    <div className="pt-10 mx-12">
-      <div className="mb-6">
+    <div className="pt-10 pb-16 px-4 md:mx-12 ">
+      <div className="hidden md:block mb-6">
         <Breadcrumb
           items={[
             { label: 'Projects', to: APP_ROUTES.dashboard.projects.root },
@@ -81,19 +99,19 @@ export default function ProjectTasks() {
         />
       </div>
 
-      <div className="flex flex-row justify-between items-end min-h-15 mb-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-end min-h-15 mb-6 gap-4">
         <div className="flex flex-col justify-between">
           <h1 className="text-neutral-high font-[600] text-[30px] leading-[1.2]">
             Active Workboard
           </h1>
-          <p className="text-[#64748B] text-[14px] leading-[1.4]">
+          <p className="hidden md:block text-[#64748B] text-[14px] leading-[1.4]">
             {project?.description ??
               `Curating ${project?.name ?? 'this project'}'s production pipeline and milestones.`}
           </p>
         </div>
 
         <div className="flex flex-row items-end gap-2">
-          <div className="relative">
+          <div className="relative flex-1 md:flex-none">
             <img
               src={searchIcon}
               alt="search"
@@ -102,30 +120,39 @@ export default function ProjectTasks() {
             <input
               type="text"
               placeholder="Search tasks..."
-              className="input-default !w-64 pl-9"
+              className="input-default w-full md:!w-64 pl-9"
             />
           </div>
 
-          <Select
-            options={VIEW_OPTIONS}
-            value={view}
-            onChange={(option) => option && setView(option)}
-            placeholder="Select view..."
-            styles={selectStyles}
-            isSearchable={false}
-            formatOptionLabel={formatOptionLabel}
-            className="w-48"
-          />
+          <div className="hidden md:block">
+            <Select
+              options={VIEW_OPTIONS}
+              value={view}
+              onChange={(option) => option && handleViewChange(option)}
+              placeholder="Select view..."
+              styles={selectStyles}
+              isSearchable={false}
+              formatOptionLabel={formatOptionLabel}
+              className="w-48"
+            />
+          </div>
         </div>
       </div>
+
+      {projectId && (
+        <MobileTaskList
+          projectId={projectId}
+          onAddTask={handleAddTaskFromList}
+        />
+      )}
 
       {view.value === 'board' && projectId && (
         <BoardView projectId={projectId} onAddTask={handleAddTask} />
       )}
 
-      {view.value === 'list' && (
-        <div className="text-neutral-medium text-sm py-10 text-center">
-          List view coming soon.
+      {view.value === 'list' && projectId && (
+        <div className="hidden md:block ">
+          <ListView projectId={projectId} onAddTask={handleAddTaskFromList} />
         </div>
       )}
     </div>
