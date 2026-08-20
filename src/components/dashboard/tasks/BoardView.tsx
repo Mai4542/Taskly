@@ -8,7 +8,7 @@ interface BoardViewProps {
 
 const BoardView = ({ projectId, onAddTask }: BoardViewProps) => {
   return (
-    <div className="flex flex-row gap-5 overflow-x-auto pb-4 -mx-12 px-12">
+    <div className="hidden md:flex flex-row gap-5 overflow-x-auto pb-4 -mx-12 px-12">
       {STATUS_COLUMNS.map((statusConfig) => (
         <StatusColumn
           key={statusConfig.value}

@@ -1,3 +1,5 @@
+import type { TaskStatus } from '../services/tasks.service';
+
 export const STATUS_COLUMNS = [
   { value: 'TO_DO', label: 'TO DO', dot: '#94A3B8' },
   { value: 'IN_PROGRESS', label: 'IN PROGRESS', dot: '#2563EB' },
@@ -14,3 +16,21 @@ export const STATUS_COLUMNS = [
 ] as const;
 
 export type StatusValue = (typeof STATUS_COLUMNS)[number]['value'];
+
+const STATUS_MAP = Object.fromEntries(
+  STATUS_COLUMNS.map((s) => [s.value, s]),
+) as Record<TaskStatus, (typeof STATUS_COLUMNS)[number]>;
+
+export const getStatusBadgeStyle = (status?: string) => {
+  const config = STATUS_MAP[status as TaskStatus];
+
+  if (!config) {
+    return { bg: '#F1F5F9', text: '#475569', label: status ?? '-' };
+  }
+
+  return {
+    bg: `${config.dot}1A`,
+    text: config.dot,
+    label: config.label,
+  };
+};
