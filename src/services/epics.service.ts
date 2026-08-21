@@ -48,6 +48,10 @@ export interface UpdateEpicPayload {
   deadline?: string | null;
 }
 
+export interface SearchEpicsParams extends PaginationParams {
+  searchTerm?: string;
+}
+
 const AUTH_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
 const REST_BASE_URL = AUTH_BASE_URL.replace('/auth/v1', '/rest/v1');
 
@@ -134,6 +138,62 @@ export const getProjectEpicsPaginated = async (
       totalCount = matches[3] !== '*' ? parseInt(matches[3]) : 0;
     }
   }
+  const data: Epic[] = await response.json();
+
+  return {
+    data: data ?? [],
+    totalCount,
+    currentRange,
+    hasMore: offset + limit < totalCount,
+  };
+};
+
+export const searchProjectEpics = async (
+  projectId: string,
+  { page = 1, limit = 10, searchTerm = '' }: SearchEpicsParams = {},
+): Promise<PaginatedResponse<Epic>> => {
+  const offset = (page - 1) * limit;
+
+  let url = `${REST_BASE_URL}/project_epics?project_id=eq.${projectId}`;
+
+  if (searchTerm.trim()) {
+    const encodedSearchTerm = encodeURIComponent(searchTerm.trim());
+    url += `&title=ilike.%25${encodedSearchTerm}%25`;
+  }
+
+  url += `&order=created_at.desc&limit=${limit}&offset=${offset}`;
+
+  const response = await authorizedFetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Prefer: 'count=exact',
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        `Failed to search epics (Status: ${response.status})`,
+    );
+  }
+
+  const contentRange = response.headers.get('Content-Range');
+  let totalCount = 0;
+  let currentRange = { start: 0, end: 0 };
+
+  if (contentRange) {
+    const matches = contentRange.match(/(\d+)-(\d+)\/(\d+|\*)/);
+    if (matches) {
+      currentRange = {
+        start: parseInt(matches[1]),
+        end: parseInt(matches[2]),
+      };
+      totalCount = matches[3] !== '*' ? parseInt(matches[3]) : 0;
+    }
+  }
+
   const data: Epic[] = await response.json();
 
   return {
