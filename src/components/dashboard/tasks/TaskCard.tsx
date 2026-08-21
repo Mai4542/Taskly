@@ -5,6 +5,7 @@ import errorIcon from '../../../assets/imgs/errorsIcon.svg';
 
 interface TaskCardProps {
   task: TaskListItem;
+  onClick?: () => void;
 }
 
 const isSameDay = (a: Date, b: Date) =>
@@ -33,14 +34,15 @@ const getDueMeta = (task: TaskListItem) => {
   return { label: formatted.toUpperCase(), variant: 'normal' as const };
 };
 
-const TaskCard = ({ task }: TaskCardProps) => {
+const TaskCard = ({ task, onClick }: TaskCardProps) => {
   const dueMeta = getDueMeta(task);
   const isBlockedOrDelayed = dueMeta?.variant === 'delayed';
   const isToday = dueMeta?.variant === 'today';
 
   return (
     <div
-      className={`rounded-lg p-4 flex flex-col gap-3 h-27 ${
+      onClick={onClick}
+      className={`cursor-pointer rounded-lg p-4 flex flex-col gap-3 h-27 ${
         isBlockedOrDelayed
           ? 'bg-[#FFDAD633] border border-[#BA1A1A1A]'
           : isToday

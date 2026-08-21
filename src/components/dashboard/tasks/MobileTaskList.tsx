@@ -4,9 +4,14 @@ import TaskListCard from './TaskListCard';
 interface MobileTaskListProps {
   projectId: string;
   onAddTask: () => void;
+  onTaskClick: (taskId: string) => void;
 }
 
-const MobileTaskList = ({ projectId, onAddTask }: MobileTaskListProps) => {
+const MobileTaskList = ({
+  projectId,
+  onAddTask,
+  onTaskClick,
+}: MobileTaskListProps) => {
   const { tasks, status, retry } = useProjectTasks(projectId);
 
   return (
@@ -47,7 +52,11 @@ const MobileTaskList = ({ projectId, onAddTask }: MobileTaskListProps) => {
       {status === 'success' && (
         <>
           {tasks.map((task) => (
-            <TaskListCard key={task.id} task={task} />
+            <TaskListCard
+              key={task.id}
+              task={task}
+              onClick={() => onTaskClick(task.id)}
+            />
           ))}
           {tasks.length === 0 && (
             <div className="py-10 text-center text-neutral-medium text-sm">

@@ -9,12 +9,14 @@ interface StatusColumnProps {
   projectId: string;
   statusConfig: StatusConfig;
   onAddTask: (status: string) => void;
+  onTaskClick: (taskId: string) => void;
 }
 
 const StatusColumn = ({
   projectId,
   statusConfig,
   onAddTask,
+  onTaskClick,
 }: StatusColumnProps) => {
   const { tasks, status, retry } = useTasksByStatus(
     projectId,
@@ -74,7 +76,11 @@ const StatusColumn = ({
       {status === 'success' && (
         <div className="flex flex-col gap-3">
           {tasks.map((task) => (
-            <TaskCard key={task.id} task={task} />
+            <TaskCard
+              key={task.id}
+              task={task}
+              onClick={() => onTaskClick(task.id)}
+            />
           ))}
         </div>
       )}

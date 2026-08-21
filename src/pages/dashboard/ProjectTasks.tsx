@@ -10,6 +10,7 @@ import Select, { type StylesConfig } from 'react-select';
 import BoardView from '../../components/dashboard/tasks/BoardView';
 import ListView from '../../components/dashboard/tasks/ListView';
 import MobileTaskList from '../../components/dashboard/tasks/MobileTaskList';
+import TaskDetailsModal from '../../components/dashboard/tasks/TaskDetailsModal';
 
 interface OptionType {
   value: string;
@@ -58,6 +59,7 @@ export default function ProjectTasks() {
     VIEW_OPTIONS[0];
 
   const [view, setView] = useState<OptionType>(initialView);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
 
   const handleViewChange = (option: OptionType) => {
     setView(option);
@@ -143,18 +145,32 @@ export default function ProjectTasks() {
         <MobileTaskList
           projectId={projectId}
           onAddTask={handleAddTaskFromList}
+          onTaskClick={setSelectedTaskId}
         />
       )}
 
       {view.value === 'board' && projectId && (
-        <BoardView projectId={projectId} onAddTask={handleAddTask} />
+        <BoardView
+          projectId={projectId}
+          onAddTask={handleAddTask}
+          onTaskClick={setSelectedTaskId}
+        />
       )}
 
       {view.value === 'list' && projectId && (
         <div className="hidden md:block ">
-          <ListView projectId={projectId} onAddTask={handleAddTaskFromList} />
+          <ListView
+            projectId={projectId}
+            onAddTask={handleAddTaskFromList}
+            onTaskClick={setSelectedTaskId}
+          />
         </div>
       )}
+      <TaskDetailsModal
+        projectId={projectId}
+        taskId={selectedTaskId}
+        onClose={() => setSelectedTaskId(null)}
+      />
     </div>
   );
 }

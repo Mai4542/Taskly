@@ -4,6 +4,7 @@ import type { TaskListItem } from '../../../services/tasks.service';
 
 interface ListViewRowProps {
   task: TaskListItem;
+  onClick?: () => void;
 }
 
 const formatDueDate = (date: string | null) => {
@@ -17,9 +18,12 @@ const formatDueDate = (date: string | null) => {
     .replace(',', '');
 };
 
-const ListViewRow = ({ task }: ListViewRowProps) => {
+const ListViewRow = ({ task, onClick }: ListViewRowProps) => {
   return (
-    <tr className="border-b border-surface-low last:border-b-0 hover:bg-[#F8FAFF]">
+    <tr
+      onClick={onClick}
+      className="cursor-pointer border-b border-surface-low last:border-b-0 hover:bg-[#F8FAFF]"
+    >
       <td className="px-4 py-3 text-[#003D9B] text-[13px] font-[600]">
         {task.task_id}
       </td>

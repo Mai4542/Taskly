@@ -5,11 +5,12 @@ import ListViewRow from './ListViewRow';
 interface ListViewProps {
   projectId: string;
   onAddTask: () => void;
+  onTaskClick: (taskId: string) => void;
 }
 
 const TABLE_HEADERS = ['Task ID', 'Title', 'Status', 'Due Date', 'Assignee'];
 
-const ListView = ({ projectId, onAddTask }: ListViewProps) => {
+const ListView = ({ projectId, onAddTask, onTaskClick }: ListViewProps) => {
   const { tasks, status, retry } = useProjectTasks(projectId);
 
   if (status === 'loading') {
@@ -56,7 +57,11 @@ const ListView = ({ projectId, onAddTask }: ListViewProps) => {
           </thead>
           <tbody>
             {tasks.map((task) => (
-              <ListViewRow key={task.id} task={task} />
+              <ListViewRow
+                key={task.id}
+                task={task}
+                onClick={() => onTaskClick(task.id)}
+              />
             ))}
           </tbody>
         </table>

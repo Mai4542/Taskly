@@ -11,9 +11,18 @@ const formatDueDate = (date: string | null) => {
   });
 };
 
-const TaskListCard = ({ task }: { task: TaskListItem }) => {
+const TaskListCard = ({
+  task,
+  onClick,
+}: {
+  task: TaskListItem;
+  onClick?: () => void;
+}) => {
   return (
-    <div className="rounded-lg border border-surface-low bg-white p-4 flex flex-col gap-3">
+    <div
+      onClick={onClick}
+      className="rounded-lg border border-surface-low bg-white p-4 flex flex-col gap-3"
+    >
       <div className="flex items-start justify-between">
         <span className="text-[#43465480]/70 text-[11px] font-[700]">
           {task.task_id}
