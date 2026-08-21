@@ -11,6 +11,7 @@ interface EpicTaskListProps {
   status: 'loading' | 'error' | 'success';
   retry: () => void;
   onAddTask: () => void;
+  onTaskClick: (taskId: string) => void;
 }
 
 const formatDueDate = (dateString: string | null) => {
@@ -32,6 +33,7 @@ const EpicTaskList = ({
   status,
   retry,
   onAddTask,
+  onTaskClick,
 }: EpicTaskListProps) => {
   if (status === 'loading') {
     return (
@@ -85,7 +87,8 @@ const EpicTaskList = ({
           return (
             <div
               key={task.id}
-              className="rounded-lg border border-surface-low p-3 flex flex-col gap-3"
+              onClick={() => onTaskClick(task.id)}
+              className="cursor-pointer rounded-lg border border-surface-low p-3 flex flex-col gap-3 transition-colors duration-150 hover:bg-surface-low hover:border-surface-highest"
             >
               <p className="text-neutral-high text-[14px] font-[700] truncate">
                 {task.title}
@@ -142,7 +145,8 @@ const EpicTaskList = ({
           return (
             <div
               key={task.id}
-              className={`flex flex-row items-center justify-between px-4 py-4 ${
+              onClick={() => onTaskClick(task.id)}
+              className={`cursor-pointer flex flex-row items-center justify-between px-4 py-4 transition-colors duration-150 hover:bg-surface-low ${
                 index !== tasks.length - 1 ? 'border-b border-surface-low' : ''
               }`}
             >

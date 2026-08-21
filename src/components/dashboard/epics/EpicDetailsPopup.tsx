@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../../constants/router';
 import EpicTaskList from './EpicTaskList';
 import { useEpicTasks } from '../../../hooks/useEpicTasks';
+import TaskDetailsModal from '../tasks/TaskDetailsModal';
 
 interface EpicDetailsPopupProps {
   projectId: string;
@@ -79,6 +80,7 @@ const EpicDetailsPopup = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isEditingAssignee, setIsEditingAssignee] = useState(false);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const {
     tasks,
     status: tasksStatus,
@@ -570,9 +572,15 @@ const EpicDetailsPopup = ({
             status={tasksStatus}
             retry={retryTasks}
             onAddTask={handleAddTask}
+            onTaskClick={setSelectedTaskId}
           />
         </div>
       </div>
+      <TaskDetailsModal
+        projectId={projectId}
+        taskId={selectedTaskId}
+        onClose={() => setSelectedTaskId(null)}
+      />
     </div>
   );
 };
