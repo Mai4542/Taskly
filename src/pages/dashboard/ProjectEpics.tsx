@@ -19,6 +19,8 @@ import type { PaginatedResponse } from '../../types/epic.type';
 import EpicDetailsPopup from '../../components/dashboard/epics/EpicDetailsPopup';
 import searchIcon from '../../assets/imgs/search.svg';
 
+const DESKTOP_PAGE_SIZE = 6;
+
 export default function ProjectEpicsPage() {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
@@ -27,24 +29,23 @@ export default function ProjectEpicsPage() {
   const project = projects.find((p) => p.id === projectId);
 
   const [epics, setEpics] = useState<Epic[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
 
   const currentPage = parseInt(searchParams.get('page') || '1');
+  const urlSearchTerm = searchParams.get('q') || '';
+  const [searchInput, setSearchInput] = useState(urlSearchTerm);
+
   const [totalCount, setTotalCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
   const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (searchParams.has('page')) {
-      window.history.replaceState(null, '', window.location.href);
-    }
-  }, []);
+  const requestIdRef = useRef(0);
+  const hasLoadedOnce = useRef(false);
+  const committedSearchRef = useRef(urlSearchTerm);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -53,13 +54,26 @@ export default function ProjectEpicsPage() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handlePageChange = useCallback(
-    (page: number) => {
-      setSearchParams({ page: page.toString() }, { replace: true });
-      topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const updatePage = useCallback(
+    (page: number, scroll = true) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set('page', page.toString());
+          return next;
+        },
+        { replace: true },
+      );
+      if (scroll) {
+        topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     },
     [setSearchParams],
   );
+
+  useEffect(() => {
+    committedSearchRef.current = urlSearchTerm;
+  }, [urlSearchTerm]);
 
   useEffect(() => {
     if (debounceTimerRef.current) {
@@ -67,10 +81,20 @@ export default function ProjectEpicsPage() {
     }
 
     debounceTimerRef.current = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-      if (currentPage !== 1) {
-        handlePageChange(1);
-      }
+      const trimmed = searchInput.trim();
+
+      if (trimmed === committedSearchRef.current) return;
+
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (trimmed) next.set('q', trimmed);
+          else next.delete('q');
+          next.set('page', '1');
+          return next;
+        },
+        { replace: true },
+      );
     }, 400);
 
     return () => {
@@ -78,24 +102,29 @@ export default function ProjectEpicsPage() {
         clearTimeout(debounceTimerRef.current);
       }
     };
-  }, [searchTerm, currentPage, handlePageChange]);
+  }, [searchInput]);
 
-  const PAGE_SIZE = isMobile && totalCount > 0 ? totalCount : 6;
+  const PAGE_SIZE = isMobile
+    ? totalCount > 0
+      ? totalCount
+      : DESKTOP_PAGE_SIZE
+    : DESKTOP_PAGE_SIZE;
 
   const fetchEpics = useCallback(async () => {
     if (!projectId) return;
 
-    setLoading(true);
+    const requestId = ++requestIdRef.current;
+    setIsFetching(true);
     setError(null);
 
     try {
       let response: PaginatedResponse<Epic>;
 
-      if (debouncedSearchTerm.trim()) {
+      if (urlSearchTerm.trim()) {
         response = await searchProjectEpics(projectId, {
           page: currentPage,
           limit: PAGE_SIZE,
-          searchTerm: debouncedSearchTerm,
+          searchTerm: urlSearchTerm,
         });
       } else {
         response = await getProjectEpicsPaginated(projectId, {
@@ -104,18 +133,27 @@ export default function ProjectEpicsPage() {
         });
       }
 
+      if (requestId !== requestIdRef.current) return;
+
       setEpics(response.data);
       setTotalCount(response.totalCount);
     } catch (err) {
+      if (requestId !== requestIdRef.current) return;
       setError(
         err instanceof Error
           ? err.message
           : 'Unable to load epics. Please check your connection and try again.',
       );
     } finally {
-      setLoading(false);
+      if (requestId === requestIdRef.current) {
+        setIsFetching(false);
+        if (!hasLoadedOnce.current) {
+          hasLoadedOnce.current = true;
+          setInitialLoading(false);
+        }
+      }
     }
-  }, [projectId, currentPage, PAGE_SIZE, debouncedSearchTerm]);
+  }, [projectId, currentPage, PAGE_SIZE, urlSearchTerm]);
 
   useEffect(() => {
     fetchEpics();
@@ -123,9 +161,9 @@ export default function ProjectEpicsPage() {
 
   useEffect(() => {
     if (isMobile && totalCount > 0 && currentPage !== 1) {
-      handlePageChange(1);
+      updatePage(1, false);
     }
-  }, [isMobile, totalCount, currentPage, handlePageChange]);
+  }, [isMobile, totalCount, currentPage, updatePage]);
 
   const handleEpicClick = (epic: Epic) => {
     setSelectedEpic(epic);
@@ -147,18 +185,18 @@ export default function ProjectEpicsPage() {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    setSearchInput(e.target.value);
   };
 
   const handleClearSearch = () => {
-    setSearchTerm('');
+    setSearchInput('');
   };
 
-  const isSearching = debouncedSearchTerm.trim().length > 0;
-  const isEmpty = !loading && !error && totalCount === 0;
+  const isSearching = urlSearchTerm.trim().length > 0;
+  const isEmpty = !initialLoading && !isFetching && !error && totalCount === 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div ref={topRef} className="min-h-screen bg-background px-8 py-6">
         <EpicsSkeleton />
@@ -200,7 +238,7 @@ export default function ProjectEpicsPage() {
           <div className="relative">
             <input
               type="text"
-              value={searchTerm}
+              value={searchInput}
               onChange={handleSearchChange}
               placeholder="Search epics..."
               className="input-default !w-68 pl-10"
@@ -211,7 +249,10 @@ export default function ProjectEpicsPage() {
               alt="search"
               className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
             />
-            {searchTerm && (
+            {isFetching && (
+              <span className="absolute right-9 top-1/2 -translate-y-1/2 h-3 w-3 animate-spin rounded-full border-2 border-neutral-low border-t-transparent" />
+            )}
+            {searchInput && (
               <button
                 type="button"
                 onClick={handleClearSearch}
@@ -255,7 +296,7 @@ export default function ProjectEpicsPage() {
         </div>
       )}
 
-      {!loading && !error && epics.length > 0 && (
+      {!isEmpty && epics.length > 0 && (
         <>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-15">
             {epics.map((epic) => (
@@ -267,7 +308,7 @@ export default function ProjectEpicsPage() {
             <EpicsPagination
               currentPage={currentPage}
               totalPages={totalPages}
-              onPageChange={handlePageChange}
+              onPageChange={(page) => updatePage(page, true)}
             />
           )}
         </>
