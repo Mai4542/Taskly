@@ -1,3 +1,4 @@
+// EmptyEpics.tsx
 import type { SVGProps } from 'react';
 
 interface EmptyEpicsProps extends SVGProps<SVGSVGElement> {
@@ -25,8 +26,8 @@ export function EmptyEpics({
             backdropFilter: 'blur(2px)',
             height: '100%',
             width: '100%',
+            clipPath: 'url(#bgblur_0_51_669_clip_path)',
           }}
-          clipPath="url(#bgblur_0_51_669_clip_path)"
         />
       </foreignObject>
       <g data-figma-bg-blur-radius={4}>
