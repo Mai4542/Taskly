@@ -21,7 +21,6 @@ export function EmptyEpics({
     >
       <foreignObject width={232} height={232} x={34} y={9}>
         <div
-          xmlns="http://www.w3.org/1999/xhtml"
           style={{
             backdropFilter: 'blur(2px)',
             height: '100%',
