@@ -1,5 +1,5 @@
-import prevIcon from '../../../assets/imgs/left.svg';
-import nextIcon from '../../../assets/imgs/right.svg';
+import { Left } from '../../../components/icons/Left';
+import { Right } from '../../../components/icons/Right';
 import { useEpicsPagination } from '../../../hooks/useEpicsPagination';
 interface EpicsPaginationProps {
   currentPage: number;
@@ -25,7 +25,7 @@ export default function EpicsPagination({
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          <img src={prevIcon} alt="Previous" />
+          <Left size={5} color="#434654" />
         </button>
 
         {pages.map((page) => {
@@ -59,7 +59,7 @@ export default function EpicsPagination({
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          <img src={nextIcon} alt="Next" />
+          <Right size={5} color="#434654" />
         </button>
       </div>
     </div>

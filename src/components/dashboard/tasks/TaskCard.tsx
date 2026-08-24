@@ -1,7 +1,7 @@
 import { getInitials } from '../../../utils/avatar';
-import calendar from '../../../assets/imgs/coloredcalendar.svg';
+import { ColoredCalendar } from '../../../components/icons/ColoredCalendar';
 import type { TaskListItem } from '../../../services/tasks.service';
-import errorIcon from '../../../assets/imgs/errorsIcon.svg';
+import { ErrorsIcon } from '../../../components/icons/ErrorsIcon';
 
 interface TaskCardProps {
   task: TaskListItem;
@@ -58,21 +58,29 @@ const TaskCard = ({ task, onClick }: TaskCardProps) => {
         {dueMeta ? (
           dueMeta.variant === 'delayed' ? (
             <div className="flex flex-row items-center mt-4 gap-1 ">
-              <img src={errorIcon} alt="error icon" />
+              <ErrorsIcon size={11} color="#BA1A1A" />
               <span className="text-[#DC2626] text-[11px] font-[700] uppercase">
                 Delayed
               </span>
             </div>
           ) : dueMeta.variant === 'today' ? (
             <div className="flex flex-row items-center mt-4 gap-2">
-              <img src={calendar} alt="Calendar" className="w-3.5 h-3.5" />
+              <ColoredCalendar
+                size={14}
+                color="#003D9B"
+                className="w-3.5 h-3.5"
+              />
               <span className="text-[#003D9B] text-[11px] font-[700] uppercase">
                 Today
               </span>
             </div>
           ) : (
             <div className="flex flex-row items-center mt-4 gap-2">
-              <img src={calendar} alt="Calendar" className="w-3.5 h-3.5" />
+              <ColoredCalendar
+                size={14}
+                color="#003D9B"
+                className="w-3.5 h-3.5"
+              />
               <span className="text-neutral-medium text-[11px] font-[600] uppercase">
                 {dueMeta.label}
               </span>

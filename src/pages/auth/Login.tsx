@@ -5,14 +5,14 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '../../schemas/login.schema';
 import type { LoginForm } from '../../schemas/login.schema';
-import show from '../../assets/imgs/show.svg';
-import hide from '../../assets/imgs/hide.svg';
+import { Show } from '../../components/icons/Show';
+import { Hide } from '../../components/icons/Hide';
 import { APP_ROUTES } from '../../constants/router';
 import { useNavigate } from 'react-router-dom';
 
 export default function Login() {
   const { login, isLoading, error, clearError } = useAuth();
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
 
@@ -33,8 +33,7 @@ export default function Login() {
     try {
       await login(data, rememberMe);
       navigate(APP_ROUTES.dashboard.projects.root, { replace: true });
-    } catch (err) {
-    }
+    } catch (err) {}
   };
 
   return (
@@ -56,7 +55,10 @@ export default function Login() {
       )}
 
       <div className="mb-4">
-        <label htmlFor="email" className="block text-neutral-medium label-sm mb-2">
+        <label
+          htmlFor="email"
+          className="block text-neutral-medium label-sm mb-2"
+        >
           EMAIL
         </label>
         <Controller
@@ -78,10 +80,13 @@ export default function Login() {
       </div>
 
       <div className="mb-9">
-        <label htmlFor="password" className="block text-neutral-medium label-sm mb-2">
+        <label
+          htmlFor="password"
+          className="block text-neutral-medium label-sm mb-2"
+        >
           PASSWORD
         </label>
-        
+
         <div className="relative">
           <Controller
             name="password"
@@ -96,20 +101,20 @@ export default function Login() {
               />
             )}
           />
-          
+
           <button
             type="button"
             className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
             onClick={() => setShowPassword(!showPassword)}
           >
             {showPassword ? (
-              <img src={hide} alt='show' />
+              <Hide size={20} color="#020617" />
             ) : (
-              <img src={show} alt='hide' />
+              <Show size={22} color="#737685" />
             )}
           </button>
         </div>
-        
+
         {errors.password && (
           <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
         )}
@@ -123,11 +128,17 @@ export default function Login() {
               onChange={(e) => setRememberMe(e.target.checked)}
               className="h-4 w-4 rounded border border-[#D6D8E4] bg-[#F4F5FA] accent-indigo-600 cursor-pointer"
             />
-            <label htmlFor="rememberMe" className="text-[14px] text-[#434654] font-bold">
+            <label
+              htmlFor="rememberMe"
+              className="text-[14px] text-[#434654] font-bold"
+            >
               Remember Me
             </label>
           </div>
-          <Link to={APP_ROUTES.auth.forget_password} className="text-[14px] text-[#003D9B] font-medium">
+          <Link
+            to={APP_ROUTES.auth.forget_password}
+            className="text-[14px] text-[#003D9B] font-medium"
+          >
             Forgot Password?
           </Link>
         </div>
@@ -140,7 +151,10 @@ export default function Login() {
       <div className="flex justify-center mt-10">
         <p className="text-neutral-medium text-sm">
           Don't have an account?{' '}
-          <Link to={APP_ROUTES.auth.signup} className="text-primary title-md text-[14px] hover:underline">
+          <Link
+            to={APP_ROUTES.auth.signup}
+            className="text-primary title-md text-[14px] hover:underline"
+          >
             Sign Up
           </Link>
         </p>

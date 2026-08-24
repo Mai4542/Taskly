@@ -1,10 +1,10 @@
 import { getInitials } from '../../../utils/avatar';
-import userIcon from '../../../assets/imgs/notAssigned.svg';
+import { NotAssigned } from '../../../components/icons/NotAssigned';
 import type { TaskDetailsProps } from './TaskDetailsModal';
 import { formatDate } from './TaskDetailsUtils';
-import circle from '../../../assets/imgs/circlee.svg';
-import calenderr from '../../../assets/imgs/coloredcalendar.svg';
-import epicc from '../../../assets/imgs/epic.svg';
+import { Circlee } from '../../../components/icons/Circlee';
+import { ColoredCalendar } from '../../../components/icons/ColoredCalendar';
+import { Epic } from '../../../components/icons/Epic';
 
 const TaskDetailsMobile = ({
   task,
@@ -58,7 +58,7 @@ const TaskDetailsMobile = ({
 
             {task.epic && (
               <div className="flex flex-row items-center px-2 py-1 gap-1.5 border border-surface-highest rounded-lg min-w-0">
-                <img src={epicc} alt="Epic" className="w-3 h-3 shrink-0" />
+                <Epic size={11} color="#374763" className="w-3 h-3 shrink-0" />
                 <span className="body-name-regular text-neutral-medium-alt truncate text-[12px]">
                   {task.epic.epic_id} ({task.epic.title})
                 </span>
@@ -114,7 +114,11 @@ const TaskDetailsMobile = ({
                     </span>
                   )
                 ) : (
-                  <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
+                  <NotAssigned
+                    size={12}
+                    color="#4F5F7B"
+                    className="w-3.5 h-3.5"
+                  />
                 )}
               </div>
               <span className="body-name text-neutral-high truncate">
@@ -126,7 +130,11 @@ const TaskDetailsMobile = ({
           <div className="flex flex-col p-4 pb-5 bg-surface-low rounded-lg gap-1">
             <span className="label-xs text-extra-grey">Due Date</span>
             <div className="flex flex-row items-center gap-2 pt-1">
-              <img src={calenderr} alt="calender" className="w-[10.5px] h-[11.67px]" />
+              <ColoredCalendar
+                size={14}
+                color="#003D9B"
+                className="w-[10.5px] h-[11.67px]"
+              />
               <span className="body-name-regular text-neutral-high">
                 {formatDate(task.due_date)}
               </span>
@@ -150,7 +158,11 @@ const TaskDetailsMobile = ({
           <div className="flex flex-col p-4 pb-5 bg-surface-low rounded-lg gap-1">
             <span className="label-xs text-extra-grey">Created At</span>
             <div className="flex flex-row items-center gap-2 pt-1">
-              <img src={circle} alt="circle" className="w-[10.5px] h-[10.5px]" />
+              <Circlee
+                size={11}
+                color="#4F5F7B"
+                className="w-[10.5px] h-[10.5px]"
+              />
               <span className="body-name-regular text-neutral-high">
                 {formatDate(task.created_at)}
               </span>

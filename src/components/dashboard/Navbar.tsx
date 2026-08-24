@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import { getInitials } from '../../utils/avatar';
-import menu from '../../assets/imgs/burger.svg';
+import { Burger } from '../../components/icons/Burger';
+import { Logout } from '../../components/icons/Logout';
 
 interface DashboardNavbarProps {
   onMenuClick: () => void;
@@ -34,7 +35,7 @@ export default function DashboardNavbar({
     <header className="bg-background! flex h-16 w-full shrink-0 items-center justify-between border-b border-surface-highest bg-white px-4 sm:px-6">
       <div className="flex items-center gap-3 lg:hidden">
         <button type="button" onClick={onMenuClick} aria-label="Open menu">
-          <img src={menu} alt="Menu" className="h-[15px] w-[18px]" />
+          <Burger size={18} color="#041B3C" className="h-[15px] w-[18px]" />
         </button>
         <div className="flex items-center gap-2">
           <span className="text-neutral-high! text-[20px] font-bold font-main">
@@ -109,19 +110,7 @@ export default function DashboardNavbar({
               }}
               className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-surface-low transition-colors"
             >
-              <svg
-                className="h-4 w-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
+              <Logout size={18} color="#BA1A1A" className="h-4 w-4" />
               Logout
             </button>
           </div>

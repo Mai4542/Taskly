@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams, useParams } from 'react-router-dom';
 import Breadcrumb from '../../components/common/Breadcrumb';
 import { APP_ROUTES } from '../../constants/router';
 import { useProject } from '../../hooks/useProject';
-import searchIcon from '../../assets/imgs/search.svg';
-import boardIcon from '../../assets/imgs/board.svg';
-import listIcon from '../../assets/imgs/listview.svg';
+import { Search } from '../../components/icons/Search';
+import { Board } from '../../components/icons/Board';
+import { ListView as ListViewIcon } from '../../components/icons/ListView';
 import Select, { type StylesConfig } from 'react-select';
 import BoardView from '../../components/dashboard/tasks/BoardView';
 import ListView from '../../components/dashboard/tasks/ListView';
@@ -15,7 +15,11 @@ import TaskDetailsModal from '../../components/dashboard/tasks/TaskDetailsModal'
 interface OptionType {
   value: string;
   label: string;
-  icon?: string;
+  icon?: React.ComponentType<{
+    size?: number;
+    color?: string;
+    className?: string;
+  }>;
 }
 
 const selectStyles: StylesConfig<OptionType, false> = {
@@ -44,8 +48,8 @@ const selectStyles: StylesConfig<OptionType, false> = {
 };
 
 const VIEW_OPTIONS: OptionType[] = [
-  { value: 'board', label: 'Board View', icon: boardIcon },
-  { value: 'list', label: 'List View', icon: listIcon },
+  { value: 'board', label: 'Board View', icon: Board },
+  { value: 'list', label: 'List View', icon: ListViewIcon },
 ];
 
 export default function ProjectTasks() {
@@ -70,14 +74,15 @@ export default function ProjectTasks() {
     });
   };
 
-  const formatOptionLabel = (option: OptionType) => (
-    <div className="flex items-center gap-2">
-      {option.icon && (
-        <img src={option.icon} alt={option.label} className="w-4 h-4" />
-      )}
-      <span>{option.label}</span>
-    </div>
-  );
+  const formatOptionLabel = (option: OptionType) => {
+    const Icon = option.icon;
+    return (
+      <div className="flex items-center gap-2">
+        {Icon && <Icon size={14} color="#041B3C" className="w-4 h-4" />}
+        <span>{option.label}</span>
+      </div>
+    );
+  };
 
   const handleAddTask = (status: string) => {
     if (!projectId) return;
@@ -114,9 +119,9 @@ export default function ProjectTasks() {
 
         <div className="flex flex-row items-end gap-2">
           <div className="relative flex-1 md:flex-none">
-            <img
-              src={searchIcon}
-              alt="search"
+            <Search
+              size={14}
+              color="#94A3B8"
               className="absolute left-3 top-1/2 transform -translate-y-1/2 w-3.5 h-3.5 pointer-events-none"
             />
             <input

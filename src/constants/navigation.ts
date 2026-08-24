@@ -1,15 +1,19 @@
-import container from '../assets/imgs/projectsIcon.svg';
-import members from '../assets/imgs/MembersIcon.svg';
-import tasks from '../assets/imgs/TasksIcon.svg';
-import details from '../assets/imgs/DetailsIcon.svg';
-import epics from '../assets/imgs/EpicsIcon.svg';
+import { ProjectsIcon } from '../components/icons/ProjectsIcon';
+import { MembersIcon } from '../components/icons/MembersIcon';
+import { TasksIcon } from '../components/icons/TasksIcon';
+import { DetailsIcon } from '../components/icons/DetailsIcon';
+import { EpicsIcon } from '../components/icons/EpicsIcon';
 import { APP_ROUTES } from './router';
 
 export interface NavItem {
   label: string;
   shortLabel: string;
   path: string;
-  icon: string;
+  icon: React.ComponentType<{
+    size?: number;
+    color?: string;
+    className?: string;
+  }>;
   end?: boolean;
 }
 
@@ -19,7 +23,7 @@ export const getNavItems = (projectId?: string | null): NavItem[] => {
       label: 'Projects',
       shortLabel: 'Projects',
       path: APP_ROUTES.dashboard.projects.root,
-      icon: container,
+      icon: ProjectsIcon,
       end: true,
     },
   ];
@@ -30,28 +34,28 @@ export const getNavItems = (projectId?: string | null): NavItem[] => {
         label: 'Project Epics',
         shortLabel: 'Epics',
         path: APP_ROUTES.dashboard.epics(projectId),
-        icon: epics,
+        icon: EpicsIcon,
         end: true,
       },
       {
         label: 'Project Tasks',
         shortLabel: 'Tasks',
         path: APP_ROUTES.dashboard.tasks(projectId),
-        icon: tasks,
+        icon: TasksIcon,
         end: true,
       },
       {
         label: 'Project Members',
         shortLabel: 'Members',
         path: APP_ROUTES.dashboard.members(projectId),
-        icon: members,
+        icon: MembersIcon,
         end: true,
       },
       {
         label: 'Project Details',
         shortLabel: 'Details',
         path: APP_ROUTES.dashboard.edit(projectId),
-        icon: details,
+        icon: DetailsIcon,
         end: true,
       },
     );

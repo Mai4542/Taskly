@@ -2,8 +2,8 @@ import type { Epic } from '../../../types/epic.type';
 import { formatDate } from '../../../utils/formatDate';
 import { getInitials } from '../../../utils/avatar';
 
-import calendarIcon from '../../../assets/imgs/calender.svg';
-import editIcon from '../../../assets/imgs/editicon.svg';
+import { Calendar } from '../../../components/icons/Calendar';
+import { EditIcon } from '../../../components/icons/EditIcon';
 
 interface EpicCardProps {
   epic: Epic;
@@ -51,14 +51,14 @@ export default function EpicCard({ epic, onClick }: EpicCardProps) {
 
       <div className="mt-4 flex items-center justify-between border-t border-surface-highest pt-3 text-[11px] text-neutral-medium">
         <span className="flex items-center gap-1">
-          <img src={editIcon} alt="" className="h-3.5 w-3.5" />
+          <EditIcon size={12} color="#434654" className="h-3.5 w-3.5" />
           Created by:{' '}
           <span className="text-neutral-high">
             {epic.created_by?.name ?? '—'}
           </span>
         </span>
         <span className="flex items-center gap-1">
-          <img src={calendarIcon} alt="" className="h-3.5 w-3.5" />
+          <Calendar size={11} color="#434654" className="h-3.5 w-3.5" />
           {formatDate(epic.created_at)}
         </span>
       </div>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import exit from '../../../assets/imgs/exit.svg';
-import link from '../../../assets/imgs/link.svg';
-import epicIcon from '../../../assets/imgs/epicIcon.svg';
-import calendar from '../../../assets/imgs/calender.svg';
+import { Exit } from '../../../components/icons/Exit';
+import { Link } from '../../../components/icons/Link';
+import { EpicIcon } from '../../../components/icons/EpicIcon';
+import { Calendar } from '../../../components/icons/Calendar';
 import { getInitials } from '../../../utils/avatar';
 import Select, { type SingleValue } from 'react-select';
 import { components } from 'react-select';
@@ -12,7 +12,7 @@ import { useEpicDetails } from '../../../hooks/useEpicDetails';
 import { useProjectMembers } from '../../../hooks/useProjectMembers';
 import type { ProjectMember } from '../../../services/members.service';
 import type { Epic, EpicUser } from '../../../services/epics.service';
-import userIcon from '../../../assets/imgs/notAssigned.svg';
+import { NotAssigned } from '../../../components/icons/NotAssigned';
 import { useNavigate } from 'react-router-dom';
 import { APP_ROUTES } from '../../../constants/router';
 import EpicTaskList from './EpicTaskList';
@@ -197,7 +197,7 @@ const EpicDetailsPopup = ({
         <div className="flex flex-row items-center gap-2">
           {data.value === null ? (
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
-              <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
+              <NotAssigned size={12} color="#4F5F7B" className="w-3.5 h-3.5" />
             </div>
           ) : data.avatar_url ? (
             <img
@@ -252,9 +252,9 @@ const EpicDetailsPopup = ({
       >
         <div className="flex w-full justify-between items-center gap-2">
           <div className="flex flex-row items-center gap-2 min-w-0">
-            <img
-              src={epicIcon}
-              alt="Epic Icon"
+            <EpicIcon
+              size={20}
+              color="#003D9B"
               className="w-5 h-3.5 shrink-0"
             />
             <p className="text-[#041B3C99]/60 text-[11px] md:text-[12px] font-[700] truncate">
@@ -267,9 +267,9 @@ const EpicDetailsPopup = ({
               onClick={handleCopyLink}
               className="p-1.5 md:px-3 md:py-2 flex flex-row items-center gap-1.5 md:gap-2 rounded-full hover:bg-gray-100 cursor-pointer"
             >
-              <img
-                src={link}
-                alt="link"
+              <Link
+                size={15}
+                color="#434654"
                 className="w-3.5 h-3.5 md:w-4 md:h-4"
               />
               <p className="text-[11px] md:text-[14px] text-[#434654] font-[500]">
@@ -282,9 +282,9 @@ const EpicDetailsPopup = ({
               onClick={onClose}
               aria-label="Close"
             >
-              <img
-                src={exit}
-                alt="exit"
+              <Exit
+                size={14}
+                color="#041B3C"
                 className="w-3 h-3 md:w-3.5 md:h-3.5"
               />
             </button>
@@ -388,7 +388,11 @@ const EpicDetailsPopup = ({
                     </div>
                   ) : (
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
-                      <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
+                      <NotAssigned
+                        size={12}
+                        color="#4F5F7B"
+                        className="w-3.5 h-3.5"
+                      />
                     </div>
                   )}
                   <p className="text-[#041B3C] text-[13px] font-[700] truncate">
@@ -403,9 +407,9 @@ const EpicDetailsPopup = ({
                 DEADLINE
               </p>
               <div className="w-full flex flex-row items-center gap-2 border border-[#D7E2FF] rounded-lg px-3 py-2 ">
-                <img
-                  src={calendar}
-                  alt="Calendar"
+                <Calendar
+                  size={11}
+                  color="#434654"
                   className="w-3.5 h-3.5 shrink-0"
                 />
                 <input
@@ -423,7 +427,7 @@ const EpicDetailsPopup = ({
               CREATED AT
             </p>
             <div className="flex flex-row items-center gap-2">
-              <img src={calendar} alt="Calendar" className="w-3.5 h-3.5" />
+              <Calendar size={11} color="#434654" className="w-3.5 h-3.5" />
               <p className="text-[#041B3C] text-[14px] font-[500]">
                 {formatDate(epic.created_at)}
               </p>
@@ -507,7 +511,11 @@ const EpicDetailsPopup = ({
                   </div>
                 ) : (
                   <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
-                    <img src={userIcon} alt="User" className="w-3 h-3" />
+                    <NotAssigned
+                      size={12}
+                      color="#4F5F7B"
+                      className="w-3 h-3"
+                    />
                   </div>
                 )}
                 <p className="text-[#041B3C] text-[12px] font-[700] truncate">
@@ -522,16 +530,16 @@ const EpicDetailsPopup = ({
               DEADLINE
             </p>
             <div className="w-full flex flex-row items-center gap-1.5 border border-[#D7E2FF] rounded-lg px-2 py-1.5">
-              <img
-                src={calendar}
-                alt="Calendar"
+              <Calendar
+                size={11}
+                color="#434654"
                 className="w-3.5 h-3.5 shrink-0"
               />
               <input
                 type="date"
                 value={toInputDate(epic.deadline)}
                 onChange={handleDeadlineChange}
-                className="w-full text-[12px] font-[500] text-[#041B3C] outline-none"
+                className="w-full text-[12px] font-medium text-neutral-high outline-none"
               />
             </div>
           </div>
@@ -541,7 +549,7 @@ const EpicDetailsPopup = ({
               CREATED AT
             </p>
             <div className="flex flex-row items-center gap-2">
-              <img src={calendar} alt="Calendar" className="w-3.5 h-3.5" />
+              <Calendar size={11} color="#434654" className="w-3.5 h-3.5" />
               <p className="text-[#041B3C] text-[13px] font-[500]">
                 {formatDate(epic.created_at)}
               </p>

@@ -5,9 +5,9 @@ import { addProjectSchema } from '../../schemas/addProject.schema';
 import type { AddProjectForm } from '../../schemas/addProject.schema';
 import { useCreateProject } from '../../hooks/useCreateProject';
 import { APP_ROUTES } from '../../constants/router';
-import add from '../../assets/imgs/addproject.svg';
-import tip from '../../assets/imgs/tip.svg';
-import tiperror from '../../assets/imgs/errortip.svg';
+import { AddProject as AddProjectIcon } from '../../components/icons/AddProject';
+import { Tip } from '../../components/icons/Tip';
+import { ErrorTip } from '../../components/icons/ErrorTip';
 
 export default function AddProject() {
   const navigate = useNavigate();
@@ -56,7 +56,7 @@ export default function AddProject() {
         <div className="rounded-xl bg-white shadow-sm overflow-hidden max-w-[672px] w-full">
           <div className="flex items-start gap-3 p-6 border-b border-surface-highest">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#0052CC1A]/70 mt-1">
-              <img src={add} alt="add" />
+              <AddProjectIcon size={22} color="#0052CC" />
             </div>
             <div>
               <h2 className="title-md text-neutral-high">
@@ -98,7 +98,7 @@ export default function AddProject() {
                 role="alert"
                 className="mt-1.5 text-sm text-error flex items-center gap-1.5"
               >
-                <img src={tiperror} alt="tiperror" className="mt-1" />
+                <ErrorTip size={14} color="#BA1A1A" className="mt-1" />
                 {errors.name.message}
               </p>
             )}
@@ -158,7 +158,7 @@ export default function AddProject() {
           </form>
 
           <div className="flex items-start gap-2 bg-surface-low px-4 py-3 sm:px-6">
-            <img src={tip} alt="tip" className="mt-1" />
+            <Tip size={12} color="#4F5F7B" className="mt-1" />
             <p className="body-md text-neutral-medium text-[12px]">
               <span className="font-bold text-neutral-high">Pro Tip:</span> You
               can invite project members and assign epics immediately after the

@@ -1,11 +1,11 @@
 import { components } from 'react-select';
 import Select from 'react-select';
 import { getInitials } from '../../../utils/avatar';
-import exit from '../../../assets/imgs/exit.svg';
-import link from '../../../assets/imgs/link.svg';
-import epicIcon from '../../../assets/imgs/epicIcon.svg';
-import calendar from '../../../assets/imgs/calender.svg';
-import userIcon from '../../../assets/imgs/notAssigned.svg';
+import { Exit } from '../../../components/icons/Exit';
+import { Link } from '../../../components/icons/Link';
+import { EpicIcon } from '../../../components/icons/EpicIcon';
+import { Calendar } from '../../../components/icons/Calendar';
+import { NotAssigned } from '../../../components/icons/NotAssigned';
 import type { TaskDetailsProps } from './TaskDetailsModal';
 import { formatDate, ChevronDown, customStyles } from './TaskDetailsUtils';
 
@@ -56,7 +56,11 @@ const TaskDetailsDesktop = ({
 
             {task.epic && (
               <div className="flex flex-row items-center px-2 py-2 gap-1.5 border border-surface-highest rounded-lg min-w-0">
-                <img src={epicIcon} alt="Epic" className="w-3 h-3 shrink-0" />
+                <EpicIcon
+                  size={20}
+                  color="#003D9B"
+                  className="w-3 h-3 shrink-0"
+                />
                 <span className="body-name-regular text-neutral-medium-alt truncate">
                   {task.epic.epic_id} ({task.epic.title})
                 </span>
@@ -70,7 +74,7 @@ const TaskDetailsDesktop = ({
               aria-label="Close"
               className="cursor-pointer ml-auto p-1.5 rounded-full hover:bg-surface-low shrink-0"
             >
-              <img src={exit} alt="close" className="w-3 h-3" />
+              <Exit size={14} color="#041B3C" className="w-3 h-3" />
             </button>
           </div>
 
@@ -94,7 +98,7 @@ const TaskDetailsDesktop = ({
             onClick={onCopyLink}
             className="cursor-pointer flex flex-row items-center gap-2 px-3 py-1.5 rounded-xs hover:bg-white body-name-regular text-neutral-medium-alt"
           >
-            <img src={link} alt="link" className="w-3.5 h-3.5" />
+            <Link size={15} color="#434654" className="w-3.5 h-3.5" />
             Copy link
           </button>
 
@@ -200,7 +204,11 @@ const TaskDetailsDesktop = ({
                     )
                   ) : (
                     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-surface-low shrink-0">
-                      <img src={userIcon} alt="User" className="w-3.5 h-3.5" />
+                      <NotAssigned
+                        size={12}
+                        color="#4F5F7B"
+                        className="w-3.5 h-3.5"
+                      />
                     </div>
                   )}
                   <span className="body-name text-neutral-high truncate">
@@ -232,9 +240,9 @@ const TaskDetailsDesktop = ({
             <p className="label-plain text-neutral-medium-alt">Due Date</p>
             <div className="flex flex-row justify-between items-center p-2 bg-white border border-surface-highest rounded-lg h-10">
               <div className="flex flex-row items-center gap-2 min-w-0">
-                <img
-                  src={calendar}
-                  alt="Calendar"
+                <Calendar
+                  size={11}
+                  color="#434654"
                   className="w-3.5 h-3.5 shrink-0"
                 />
                 <span className="body-name-regular text-neutral-high">

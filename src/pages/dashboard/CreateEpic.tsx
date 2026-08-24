@@ -3,7 +3,7 @@ import { useCreateEpic } from '../../hooks/useCreateEpic';
 import { useProjectMembers } from '../../hooks/useProjectMembers';
 import { useProjects } from '../../hooks/useProjects';
 import Breadcrumb from '../../components/common/Breadcrumb';
-import errortip from '../../assets/imgs/errortip.svg';
+import { ErrorTip } from '../../components/icons/ErrorTip';
 import { APP_ROUTES } from '../../constants/router';
 
 const CreateEpic = () => {
@@ -62,7 +62,7 @@ const CreateEpic = () => {
               />
               {errors.title && (
                 <div className="flex items-center gap-1 mt-2 text-error text-sm">
-                  <img src={errortip} alt="error" className="text-error" />
+                  <ErrorTip size={14} color="#BA1A1A" />
                   <span className="text-semibold! uppercase  text-[11px] text-[#BA1A1A]">
                     {errors.title.message}
                   </span>

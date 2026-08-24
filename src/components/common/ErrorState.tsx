@@ -1,4 +1,4 @@
-import offline from '../../assets/imgs/offline.svg';
+import { Offline } from '../../components/icons/Offline';
 
 interface ErrorStateProps {
   title?: string;
@@ -16,7 +16,7 @@ export default function ErrorState({
   return (
     <div className="flex flex-col items-center justify-center text-center py-40 px-4">
       <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#FFDAD6] mb-4">
-        <img src={offline} alt="offline" />
+        <Offline size={28} color="#BA1A1A" />
       </div>
       <h2 className="title-md text-neutral-high">{title}</h2>
       <p className="body-md text-neutral-medium mt-2 max-w-xs text-[13px]">

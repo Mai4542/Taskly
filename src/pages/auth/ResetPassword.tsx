@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import { resetPasswordSchema } from '../../schemas/resetPassword.schema';
 import type { ResetPasswordForm as ResetPasswordFormValues } from '../../schemas/resetPassword.schema';
 import { useResetPassword } from '../../hooks/useResetPassword';
-import show from '../../assets/imgs/show.svg';
-import hide from '../../assets/imgs/hide.svg';
+import { Show } from '../../components/icons/Show';
+import { Hide } from '../../components/icons/Hide';
 import { APP_ROUTES } from '../../constants/router';
 import UpdatePasswordChecklist from '../../components/UpdatePasswordCheckList';
 
@@ -107,11 +107,11 @@ export default function ResetPassword() {
               onClick={() => setShowPassword(!showPassword)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              <img
-                src={showPassword ? hide : show}
-                alt=""
-                className="h-4 w-4"
-              />
+              {showPassword ? (
+                <Hide size={20} color="#020617" className="h-4 w-4" />
+              ) : (
+                <Show size={22} color="#737685" className="h-4 w-4" />
+              )}
             </button>
           </div>
           {errors.password && (

@@ -17,7 +17,7 @@ import {
 } from '../../services/epics.service';
 import type { PaginatedResponse } from '../../types/epic.type';
 import EpicDetailsPopup from '../../components/dashboard/epics/EpicDetailsPopup';
-import searchIcon from '../../assets/imgs/search.svg';
+import { Search } from '../../components/icons/Search';
 
 const DESKTOP_PAGE_SIZE = 6;
 
@@ -244,9 +244,9 @@ export default function ProjectEpicsPage() {
               className="input-default !w-68 pl-10"
               style={{ transition: 'none' }}
             />
-            <img
-              src={searchIcon}
-              alt="search"
+            <Search
+              size={14}
+              color="#94A3B8"
               className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
             />
             {isFetching && (

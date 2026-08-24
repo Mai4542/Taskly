@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { forgetPasswordSchema } from '../../schemas/forgetPassword.schema';
 import type { ForgetPasswordForm as ForgotPasswordFormValues } from '../../schemas/forgetPassword.schema';
 import { useForgotPassword } from '../../hooks/useForgotPassword';
-import timer from '../../assets/imgs/timer.svg';
-import forgotIcon from '../../assets/imgs/forget-password.svg';
+import { Timer } from '../../components/icons/Timer';
+import { ForgetPassword } from '../../components/icons/ForgetPassword';
 import { APP_ROUTES } from '../../constants/router';
 
 export default function ForgotPassword() {
@@ -44,7 +44,7 @@ export default function ForgotPassword() {
         {submitted && (
           <div className="mb-6 flex justify-center sm:hidden">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-highest">
-              <img src={forgotIcon} alt="" className="h-5 w-5" />
+              <ForgetPassword size={20} color="#0052CC" className="h-5 w-5" />
             </div>
           </div>
         )}
@@ -204,7 +204,7 @@ export default function ForgotPassword() {
                           }
                           className="cursor-pointer flex items-center justify-center gap-2 label-sm title-md text-extra-grey disabled:cursor-not-allowed disabled:text-neutral-low"
                         >
-                          <img src={timer} alt="" className="h-5 w-5" />
+                          <Timer size={18} color="#737685" className="h-5 w-5" />
                           {countdown.isRunning
                             ? `Resend in ${countdown.minutes}:${countdown.seconds}`
                             : 'Resend'}

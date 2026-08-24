@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAcceptInvitation } from '../hooks/useAcceptInvitation';
 import { APP_ROUTES } from '../constants/router';
-import folder from '../assets/imgs/folder.svg';
-import logo from '../assets/imgs/Logo.svg';
+import { Folder } from '../components/icons/Folder';
+import { Logo } from '../components/icons/Logo';
 type PageStatus = 'idle' | 'loading' | 'success' | 'error';
 
 export const AcceptInvitation = () => {
@@ -49,17 +49,17 @@ export const AcceptInvitation = () => {
           'radial-gradient(circle at 20% 20%, #dbe6fb 0%, #f4f7fd 45%, #ffffff 100%)',
       }}
     >
-      <div className="w-full max-w-[456px] px-4">
+      <div className="w-full max-w-114 px-4">
         <div className="mb-6 flex items-center justify-center gap-2">
-          <img src={logo} alt="logo" className="text-primary h-6 w-6" />
+          <Logo size={18} color="#0052CC" className="text-primary h-6 w-6" />
           <span className="text-neutral-high text-lg font-bold tracking-wide">
             TASKLY
           </span>
         </div>
 
         <div className="border-primary rounded-lg border-t-4 bg-white p-8 text-center shadow-lg">
-          <span className="label-sm bg-surface-low text-[#434654] mb-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1">
-            <img src={folder} className="h-3.5 w-3.5" alt="folder" />
+          <span className="label-sm bg-surface-low text-neutral-medium-alt mb-4 inline-flex items-center gap-1.5 rounded-full px-3 py-1">
+            <Folder size={12} color="#434654" className="h-3.5 w-3.5" />
             NEW PROJECT INVITATION
           </span>
 

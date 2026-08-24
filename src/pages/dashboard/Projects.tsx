@@ -7,8 +7,8 @@ import ProjectsEmptyState from '../../components/dashboard/projects/ProjectsEmpt
 import ErrorState from '../../components/common/ErrorState';
 import ProjectsPagination from '../../components/dashboard/projects/ProjectsPagination';
 import { APP_ROUTES } from '../../constants/router';
-import plus from '../../assets/imgs/add2.svg';
-import plus1 from '../../assets/imgs/add.svg';
+import { Add2 } from '../../components/icons/Add2';
+import { Add } from '../../components/icons/Add';
 
 export default function Projects() {
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export default function Projects() {
               onClick={() => navigate(APP_ROUTES.dashboard.projects.add)}
               className="btn-primary inline-flex items-center gap-2 shrink-0 w-53.5"
             >
-              <img src={plus1} alt="add" />
+              <Add size={20} color="#fff" />
               Create New Project
             </button>
           )}
@@ -88,11 +88,7 @@ export default function Projects() {
               className="cursor-pointer rounded-xl border-2 border-dashed border-[#C3C6D633]/80 flex flex-col items-center justify-center gap-2 py-8 transition-all duration-300 bg-white hover:bg-[#F8F9FC] hover:border-[#0052CC]/40 hover:shadow-lg hover:shadow-[#0052CC]/10 hover:-translate-y-1 active:translate-y-0.5 active:shadow-sm max-w-78.5 h-55"
             >
               <span className="flex h-12 w-12 rounded-lg items-center justify-center bg-[#F1F3FF] transition-colors duration-300">
-                <img
-                  src={plus}
-                  alt="add"
-                  className="transition-transform duration-300"
-                />
+                <Add2 size={20} color="#041B3C" />
               </span>
               <span className="text-[#434654] text-[14px] font-semibold transition-colors duration-300">
                 ADD PROJECT

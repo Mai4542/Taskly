@@ -1,5 +1,5 @@
 import { useProjectTasks } from '../../../hooks/useProjectTasks';
-import add from '../../../assets/imgs/plus.svg';
+import { Add } from '../../../components/icons/Add';
 import ListViewRow from './ListViewRow';
 
 interface ListViewProps {
@@ -99,7 +99,7 @@ const ListView = ({ projectId, onAddTask, onTaskClick }: ListViewProps) => {
         className="fixed bottom-8 right-8  w-14 h-14 rounded-lg btn-primary text-white  flex items-center justify-center shadow-lg hover:bg-[#00307a] cursor-pointer"
         aria-label="Add task"
       >
-        <img src={add} alt="add" className="w-12 h-12" />
+        <Add size={20} color="#fff" className="w-12 h-12" />
       </button>
     </div>
   );

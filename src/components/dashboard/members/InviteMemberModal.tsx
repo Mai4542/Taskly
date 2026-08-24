@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { useInviteMember } from '../../../hooks/useinvitemember';
 import { toast } from 'sonner';
-import peopleIcon from '../../../assets/imgs/peopleIcon.svg';
-import exit from '../../../assets/imgs/exit.svg';
-import mailIcon from '../../../assets/imgs/mailIcon.svg';
+import { PeopleIcon } from '../../../components/icons/PeopleIcon';
+import { Exit } from '../../../components/icons/Exit';
+import { MailIcon } from '../../../components/icons/MailIcon';
 
 interface InviteMemberModalProps {
   projectId: string;
@@ -74,7 +74,7 @@ const InviteMemberModal = ({
       <div className="w-[456px] max-w-full rounded-lg bg-white p-8 shadow-xl">
         <div className="mb-4 flex items-start justify-between">
           <div className="bg-surface-low flex h-12 w-12 items-center justify-center rounded-md">
-            <img src={peopleIcon} alt="peopleIcon" />
+            <PeopleIcon size={22} color="#003D9B" />
           </div>
           <button
             type="button"
@@ -82,7 +82,7 @@ const InviteMemberModal = ({
             aria-label="Close"
             className="text-neutral-medium hover:text-neutral-high flex justify-center items-center pt-3 cursor-pointer hover:bg-gray-200 rounded-full p-3"
           >
-            <img src={exit} alt="exit" />
+            <Exit size={14} color="#041B3C" />
           </button>
         </div>
 
@@ -112,7 +112,7 @@ const InviteMemberModal = ({
               })}
             />
             <span className="absolute right-1 top-1/2 -translate-y-1/2 pointer-events-none">
-              <img src={mailIcon} alt="mailIcon" />
+              <MailIcon size={15} color="#737685" />
             </span>
           </div>
 

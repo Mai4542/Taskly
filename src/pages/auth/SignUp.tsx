@@ -6,8 +6,8 @@ import { signUpSchema } from '../../schemas/signUp.schema';
 import type { SignUpForm } from '../../schemas/signUp.schema';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import show from '../../assets/imgs/show.svg';
-import hide from '../../assets/imgs/hide.svg';
+import { Show } from '../../components/icons/Show';
+import { Hide } from '../../components/icons/Hide';
 import { APP_ROUTES } from '../../constants/router';
 
 export default function SignUp() {
@@ -171,9 +171,9 @@ export default function SignUp() {
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
-                <img src={hide} alt="" />
+                <Hide size={20} color="#020617" />
               ) : (
-                <img src={show} alt="" />
+                <Show size={22} color="#737685" />
               )}
             </button>
           </div>
@@ -185,7 +185,6 @@ export default function SignUp() {
           )}
         </div>
 
-        {/* CONFIRM PASSWORD */}
         <div className="mb-4 flex-1">
           <label
             htmlFor="confirmPassword"

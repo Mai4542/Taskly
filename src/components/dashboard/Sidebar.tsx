@@ -1,8 +1,8 @@
 import { NavLink } from 'react-router-dom';
-import left from '../../assets/imgs/left.svg';
-import right from '../../assets/imgs/right.svg';
-import logoutIcon from '../../assets/imgs/Logout.svg';
-import logo from '../../assets/imgs/Logo.svg';
+import { Left } from '../../components/icons/Left';
+import { Right } from '../../components/icons/Right';
+import { Logout } from '../../components/icons/Logout';
+import { Logo as LogoIcon } from '../../components/icons/Logo';
 import { getNavItems } from '../../constants/navigation';
 
 interface SidebarProps {
@@ -19,7 +19,11 @@ function Logo({ collapsed }: { collapsed?: boolean }) {
     <div
       className={`flex items-center gap-2 px-4 py-5 ${collapsed ? 'justify-center px-0' : ''}`}
     >
-      <img src={logo} alt="Logo" className="h-[20px] w-[18px] shrink-0" />
+      <LogoIcon
+        size={18}
+        color="#0052CC"
+        className="h-[20px] w-[18px] shrink-0"
+      />
       {!collapsed && (
         <span className="text-neutral-high! text-xl! font-bold font-main">
           TASKLY
@@ -40,7 +44,7 @@ function NavLinks({
 
   return (
     <nav className="flex flex-1 flex-col gap-1 px-3">
-      {navItems.map(({ label, path, icon, end }) => (
+      {navItems.map(({ label, path, icon: Icon, end }) => (
         <NavLink
           key={path}
           to={path}
@@ -55,7 +59,7 @@ function NavLinks({
             ].join(' ')
           }
         >
-          <img src={icon} alt={label} className="h-[18px] w-[21px] shrink-0" />
+          <Icon size={21} color="#003D9B" className="h-[18px] w-[21px] shrink-0" />
           {!collapsed && (
             <span className="body-md text-primary text-semibold!">{label}</span>
           )}
@@ -87,9 +91,9 @@ function BottomActions({
           }`}
         >
           {collapsed ? (
-            <img src={right} alt="Expand" className="h-[17px] w-[12px]" />
+            <Right size={5} color="#434654" className="h-[17px] w-[12px]" />
           ) : (
-            <img src={left} alt="Collapse" className="h-[17px] w-[12px]" />
+            <Left size={5} color="#434654" className="h-[17px] w-[12px]" />
           )}
           {!collapsed && (
             <span className="text-[14px] text-primary text-bold!">
@@ -105,7 +109,7 @@ function BottomActions({
           collapsed ? 'justify-center px-0' : 'px-3'
         }`}
       >
-        <img src={logoutIcon} alt="Logout" className="h-[18px] w-[18px]" />
+        <Logout size={18} color="#BA1A1A" className="h-[18px] w-[18px]" />
         {!collapsed && <span className="body-md">Logout</span>}
       </button>
     </div>
@@ -155,7 +159,7 @@ export default function Sidebar({
         >
           <div className="flex items-center justify-between px-4 py-5">
             <div className="flex items-center gap-2">
-              <img src={logo} alt="Logo" className="h-6 w-6" />
+              <LogoIcon size={18} color="#0052CC" className="h-6 w-6" />
               <span className="title-md tracking-wide text-primary-container">
                 TASKLY
               </span>
@@ -168,7 +172,7 @@ export default function Sidebar({
 
       {!mobileOpen && (
         <nav className="fixed inset-x-0 bottom-0 z-30 flex items-center justify-around border-t border-surface-highest bg-white py-2 lg:hidden">
-          {navItems.map(({ shortLabel, path, icon }) => (
+          {navItems.map(({ shortLabel, path, icon: Icon }) => (
             <NavLink
               key={path}
               to={path}
@@ -179,7 +183,7 @@ export default function Sidebar({
                 ].join(' ')
               }
             >
-              <img src={icon} alt={shortLabel || 'icon'} className="h-5 w-5" />
+              <Icon size={21} color="#003D9B" className="h-5 w-5" />
               <span className="label-sm">{shortLabel}</span>
             </NavLink>
           ))}

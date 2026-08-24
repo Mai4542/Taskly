@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Right } from '../../components/icons/Right';
 
 export interface BreadcrumbItem {
   label: string;
@@ -36,7 +37,9 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
                 {item.label}
               </span>
             )}
-            {!isLast && <span className="text-neutral-low text-[11px]">›</span>}
+            {!isLast && (
+              <Right size={5} color="#434654" className="text-neutral-low" />
+            )}
           </div>
         );
       })}

@@ -7,9 +7,9 @@ import { useEditProject } from '../../hooks/useEditProject';
 import { APP_ROUTES } from '../../constants/router';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import ErrorState from '../../components/common/ErrorState';
-import edit from '../../assets/imgs/addproject.svg';
-import tip from '../../assets/imgs/tip.svg';
-import tiperror from '../../assets/imgs/errortip.svg';
+import { AddProject as AddProjectIcon } from '../../components/icons/AddProject';
+import { Tip } from '../../components/icons/Tip';
+import { ErrorTip } from '../../components/icons/ErrorTip';
 
 export default function EditProject() {
   const navigate = useNavigate();
@@ -119,7 +119,7 @@ export default function EditProject() {
         <div className="rounded-xl bg-white shadow-sm overflow-hidden max-w-[672px] w-full">
           <div className="flex items-start gap-3 p-6 border-b border-surface-highest">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[#0052CC1A]/70 mt-1">
-              <img src={edit} alt="edit" />
+              <AddProjectIcon size={22} color="#0052CC" />
             </div>
             <div>
               <h2 className="title-md text-neutral-high">
@@ -162,7 +162,7 @@ export default function EditProject() {
                 role="alert"
                 className="mt-1.5 text-sm text-error flex items-center gap-1.5"
               >
-                <img src={tiperror} alt="tiperror" className="mt-1" />
+                <ErrorTip size={14} color="#BA1A1A" className="mt-1" />
                 {errors.name.message}
               </p>
             )}
@@ -224,7 +224,7 @@ export default function EditProject() {
           </form>
 
           <div className="flex items-start gap-2 bg-surface-low px-4 py-3 sm:px-6">
-            <img src={tip} alt="tip" className="mt-1" />
+            <Tip size={12} color="#4F5F7B" className="mt-1" />
             <p className="body-md text-neutral-medium text-[12px]">
               <span className="font-bold text-neutral-high">Pro Tip:</span> You
               can manage project members and epics from the project dashboard

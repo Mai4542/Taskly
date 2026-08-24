@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import left from '../../../assets/imgs/left.svg';
-import right from '../../../assets/imgs/right.svg';
+import { Left } from '../../../components/icons/Left';
+import { Right } from '../../../components/icons/Right';
 import LoadingSpinner from '../../common/LoadingSpinner';
 
 interface ProjectsPaginationProps {
@@ -105,7 +105,7 @@ export default function ProjectsPagination({
           aria-label="Previous page"
           className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-low disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-low"
         >
-          <img src={left} alt="left" />
+          <Left size={5} color="#434654" />
         </button>
 
         {getPageNumbers().map((page, index) =>
@@ -139,7 +139,7 @@ export default function ProjectsPagination({
           aria-label="Next page"
           className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-medium disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-low"
         >
-          <img src={right} alt="right" />
+          <Right size={5} color="#434654" />
         </button>
       </div>
     </div>

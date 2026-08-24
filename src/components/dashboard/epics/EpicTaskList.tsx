@@ -1,8 +1,8 @@
 import { getInitials } from '../../../utils/avatar';
-import calendar from '../../../assets/imgs/calender.svg';
-import userIcon from '../../../assets/imgs/notAssigned.svg';
-import list from '../../../assets/imgs/list.svg';
-import add from '../../../assets/imgs/plussimple.svg';
+import { Calendar } from '../../../components/icons/Calendar';
+import { NotAssigned } from '../../../components/icons/NotAssigned';
+import { List } from '../../../components/icons/List';
+import { PlusSimple } from '../../../components/icons/PlusSimple';
 import type { TaskListItem } from '../../../services/tasks.service';
 import AddNewTaskButton from '../../common/AddNewTaskButton';
 
@@ -62,7 +62,11 @@ const EpicTaskList = ({
     return (
       <div className="flex flex-col gap-3 md:gap-4 items-center rounded-sm justify-center bg-[#F1F3FF] border-2 md:border-3 border-dashed border-[#C3C6D64D]/70 min-h-40 md:h-62 p-4">
         <div className="flex items-center justify-center rounded-lg bg-[#D7E2FF] w-10 h-10 md:w-12 md:h-12">
-          <img src={list} alt="List" className="w-4 h-4 md:w-4.5 md:h-4.5" />
+          <List
+            size={18}
+            color="#041B3C"
+            className="w-4 h-4 md:w-4.5 md:h-4.5"
+          />
         </div>
         <p className="text-neutral-high text-[13px] md:text-[16px] font-[500] text-center px-2">
           No tasks have been added to this epic yet
@@ -72,7 +76,7 @@ const EpicTaskList = ({
           onClick={onAddTask}
           className="btn-primary inline-flex items-center gap-2 shrink-0 px-4 py-2 w-30"
         >
-          <img src={add} alt="add" className="w-4 h-4" />
+          <PlusSimple size={14} color="#fff" className="w-4 h-4" />
           Add Task
         </button>
       </div>
@@ -107,7 +111,11 @@ const EpicTaskList = ({
                     </div>
                   ) : (
                     <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#F1F3FF] shrink-0">
-                      <img src={userIcon} alt="User" className="w-3 h-3" />
+                      <NotAssigned
+                        size={12}
+                        color="#4F5F7B"
+                        className="w-3 h-3"
+                      />
                     </div>
                   )}
                   <p className="text-neutral-medium text-[12px] font-[500] truncate">
@@ -121,12 +129,12 @@ const EpicTaskList = ({
                   </p>
                 ) : (
                   <div className="flex flex-row items-center gap-1 shrink-0">
-                    <img
-                      src={calendar}
-                      alt="Calendar"
+                    <Calendar
+                      size={11}
+                      color="#434654"
                       className="w-3.5 h-3.5"
                     />
-                    <p className="text-neutral-medium text-[12px] font-[500]">
+                    <p className="text-neutral-medium text-[12px] font-medium">
                       {formatDueDate(task.due_date)}
                     </p>
                   </div>
@@ -151,7 +159,7 @@ const EpicTaskList = ({
               }`}
             >
               <div className="flex flex-col gap-1.5 min-w-0">
-                <p className="text-neutral-high text-[16px] font-[600] truncate">
+                <p className="text-neutral-high text-[16px] font-semibold truncate">
                   {task.title}
                 </p>
                 <div className="flex flex-row items-center gap-2">
@@ -166,7 +174,7 @@ const EpicTaskList = ({
                       {getInitials(task.assignee.name)}
                     </div>
                   ) : null}
-                  <p className="text-neutral-medium text-[13px] font-[500]">
+                  <p className="text-neutral-medium text-[13px] font-medium">
                     {task.assignee?.name || 'Unassigned'}
                   </p>
                 </div>
@@ -174,15 +182,15 @@ const EpicTaskList = ({
 
               <div className="flex flex-col items-end gap-1 shrink-0">
                 {overdue ? (
-                  <p className="text-[#D92D20] text-[11px] font-[700] uppercase">
+                  <p className="text-[#D92D20] text-[11px] font-bold uppercase">
                     Overdue
                   </p>
                 ) : (
                   <>
-                    <p className="text-[#041B3C66]/60 text-[10px] font-[700]">
+                    <p className="text-[#041B3C66]/60 text-[10px] font-bold">
                       DUE DATE
                     </p>
-                    <p className="text-[#041B3CB2] text-[13px] font-[500]">
+                    <p className="text-[#041B3CB2] text-[13px] font-medium">
                       {formatDueDate(task.due_date)}
                     </p>
                   </>
