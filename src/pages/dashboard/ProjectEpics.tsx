@@ -8,6 +8,7 @@ import EpicsSkeleton from '../../components/dashboard/epics/EpicsSkeleton';
 import EpicsEmptyState from '../../components/dashboard/epics/EpicsEmptyState';
 import Pagination from '../../components/common/Pagination';
 import { useProjects } from '../../hooks/useProjects';
+import { useDebouncedSearchParam } from '../../hooks/useSearchParam';
 import { APP_ROUTES } from '../../constants/router';
 import type { Epic } from '../../types/epic.type';
 
@@ -34,18 +35,22 @@ export default function ProjectEpicsPage() {
   const [error, setError] = useState<string | null>(null);
 
   const currentPage = parseInt(searchParams.get('page') || '1');
-  const urlSearchTerm = searchParams.get('q') || '';
-  const [searchInput, setSearchInput] = useState(urlSearchTerm);
+
+  const {
+    searchInput,
+    setSearchInput,
+    urlSearchTerm,
+    isSearching,
+    clearSearch,
+  } = useDebouncedSearchParam();
 
   const [totalCount, setTotalCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const topRef = useRef<HTMLDivElement>(null);
   const [selectedEpic, setSelectedEpic] = useState<Epic | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const requestIdRef = useRef(0);
   const hasLoadedOnce = useRef(false);
-  const committedSearchRef = useRef(urlSearchTerm);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -70,39 +75,6 @@ export default function ProjectEpicsPage() {
     },
     [setSearchParams],
   );
-
-  useEffect(() => {
-    committedSearchRef.current = urlSearchTerm;
-  }, [urlSearchTerm]);
-
-  useEffect(() => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
-
-    debounceTimerRef.current = setTimeout(() => {
-      const trimmed = searchInput.trim();
-
-      if (trimmed === committedSearchRef.current) return;
-
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          if (trimmed) next.set('q', trimmed);
-          else next.delete('q');
-          next.set('page', '1');
-          return next;
-        },
-        { replace: true },
-      );
-    }, 400);
-
-    return () => {
-      if (debounceTimerRef.current) {
-        clearTimeout(debounceTimerRef.current);
-      }
-    };
-  }, [searchInput]);
 
   const PAGE_SIZE = isMobile
     ? totalCount > 0
@@ -188,11 +160,6 @@ export default function ProjectEpicsPage() {
     setSearchInput(e.target.value);
   };
 
-  const handleClearSearch = () => {
-    setSearchInput('');
-  };
-
-  const isSearching = urlSearchTerm.trim().length > 0;
   const isEmpty = !initialLoading && !isFetching && !error && totalCount === 0;
   const totalPages = Math.ceil(totalCount / PAGE_SIZE);
 
@@ -255,7 +222,7 @@ export default function ProjectEpicsPage() {
             {searchInput && (
               <button
                 type="button"
-                onClick={handleClearSearch}
+                onClick={clearSearch}
                 className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-neutral-low hover:text-neutral-medium"
                 style={{ transition: 'none' }}
               >
@@ -281,7 +248,7 @@ export default function ProjectEpicsPage() {
           <button
             type="button"
             onClick={() => navigate('new')}
-            className="btn-primary !w-auto whitespace-nowrap px-5"
+            className="btn-primary w-auto! whitespace-nowrap px-5"
           >
             + New Epic
           </button>
