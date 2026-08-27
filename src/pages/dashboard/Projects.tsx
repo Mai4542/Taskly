@@ -1,6 +1,8 @@
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePagination } from '../../hooks/usePagination';
 import { useIsMobile } from '../../hooks/useIsMobile';
+import { paginationProjectsAPI } from '../../services/projects.service';
+import type { Project } from '../../services/projects.service';
 import ProjectCard from '../../components/dashboard/projects/ProjectCard';
 import ProjectsSkeleton from '../../components/dashboard/projects/ProjectsSkeleton';
 import ProjectsEmptyState from '../../components/dashboard/projects/ProjectsEmptyState';
@@ -10,27 +12,80 @@ import { APP_ROUTES } from '../../constants/router';
 import { Add2 } from '../../components/icons/Add2';
 import { Add } from '../../components/icons/Add';
 
+const LIMIT = 10;
+
 export default function Projects() {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
-  const {
-    projects,
-    currentPage,
-    totalCount,
-    totalPages,
-    loading,
-    loadingMore,
-    error,
-    setPage,
-    nextPage,
-    prevPage,
-    loadMore,
-    hasNextPage,
-    hasPreviousPage,
-    hasMore,
-    refetch,
-  } = usePagination({ limit: 10, mode: isMobile ? 'infinite' : 'pagination' });
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const isFetchingRef = useRef(false);
+  const hasLoadedOnce = useRef(false);
+
+  const totalPages = Math.ceil(totalCount / LIMIT);
+  const hasNextPage = currentPage < totalPages;
+  const hasPreviousPage = currentPage > 1;
+  const hasMore = projects.length < totalCount;
+
+  const fetchProjects = useCallback(async (page: number, append: boolean) => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    if (append) {
+      setLoadingMore(true);
+    } else {
+      setLoading(true);
+    }
+    setError(null);
+
+    try {
+      const result = await paginationProjectsAPI({ page, limit: LIMIT });
+
+      setProjects((prev) => (append ? [...prev, ...result.data] : result.data));
+      setTotalCount(result.totalCount);
+      setCurrentPage(page);
+    } catch (err) {
+      setError('Failed to load projects');
+      console.error('Error fetching projects:', err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+      isFetchingRef.current = false;
+      hasLoadedOnce.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProjects(1, false);
+  }, [isMobile]);
+
+  const setPage = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    fetchProjects(page, false);
+  };
+
+  const nextPage = () => {
+    if (hasNextPage) fetchProjects(currentPage + 1, false);
+  };
+
+  const prevPage = () => {
+    if (hasPreviousPage) fetchProjects(currentPage - 1, false);
+  };
+
+  const loadMore = () => {
+    if (!isFetchingRef.current && hasMore) {
+      fetchProjects(currentPage + 1, true);
+    }
+  };
+
+  const refetch = () => {
+    fetchProjects(isMobile ? 1 : currentPage, false);
+  };
 
   const status: 'loading' | 'error' | 'empty' | 'success' = loading
     ? 'loading'

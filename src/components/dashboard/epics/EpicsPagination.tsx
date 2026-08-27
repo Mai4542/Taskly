@@ -1,6 +1,6 @@
 import { Left } from '../../../components/icons/Left';
 import { Right } from '../../../components/icons/Right';
-import { useEpicsPagination } from '../../../hooks/useEpicsPagination';
+import { usePaginationRange } from '../../../hooks/usePaginationRange';
 interface EpicsPaginationProps {
   currentPage: number;
   totalPages: number;
@@ -12,7 +12,7 @@ export default function EpicsPagination({
   totalPages,
   onPageChange,
 }: EpicsPaginationProps) {
-  const pages = useEpicsPagination(currentPage, totalPages);
+  const pages = usePaginationRange(currentPage, totalPages);
   return (
     <div className="my-5 justify-between items-center px-4 py-2 hidden md:flex">
       <div className="text-[#434654] text-sm">
@@ -44,7 +44,7 @@ export default function EpicsPagination({
               <button
                 key={page}
                 className={`flex items-center justify-center px-2 py-1 border-2 rounded-sm border-[#C3C6D64D] w-8 h-8  
-    ${currentPage === Number(page) ? 'bg-[#003D9B] text-white border-[#003D9B]' : 'hover:bg-gray-100 cursor-pointer'}`}
+    ${currentPage === Number(page) ? 'bg-primary text-white border-primary' : 'hover:bg-gray-100 cursor-pointer'}`}
                 onClick={() => onPageChange(Number(page))}
               >
                 {page}
