@@ -7,11 +7,17 @@ interface ListViewProps {
   projectId: string;
   onAddTask: () => void;
   onTaskClick: (taskId: string) => void;
+  searchTerm?: string;
 }
 
 const TABLE_HEADERS = ['Task ID', 'Title', 'Status', 'Due Date', 'Assignee'];
 
-const ListView = ({ projectId, onAddTask, onTaskClick }: ListViewProps) => {
+const ListView = ({
+  projectId,
+  onAddTask,
+  onTaskClick,
+  searchTerm = '',
+}: ListViewProps) => {
   const {
     tasks,
     status,
@@ -24,7 +30,7 @@ const ListView = ({ projectId, onAddTask, onTaskClick }: ListViewProps) => {
     prevPage,
     hasNextPage,
     hasPreviousPage,
-  } = useProjectTasks(projectId);
+  } = useProjectTasks(projectId, searchTerm);
 
   if (status === 'loading') {
     return (
@@ -84,7 +90,7 @@ const ListView = ({ projectId, onAddTask, onTaskClick }: ListViewProps) => {
 
         {tasks.length === 0 && (
           <div className="py-10 text-center text-neutral-medium text-sm">
-            No tasks yet.
+            {searchTerm ? 'No matching tasks found.' : 'No tasks yet.'}
           </div>
         )}
 

@@ -10,6 +10,7 @@ interface StatusColumnProps {
   statusConfig: StatusConfig;
   onAddTask: (status: string) => void;
   onTaskClick: (taskId: string) => void;
+  searchTerm?: string;
 }
 
 const StatusColumn = ({
@@ -17,10 +18,12 @@ const StatusColumn = ({
   statusConfig,
   onAddTask,
   onTaskClick,
+  searchTerm = '',
 }: StatusColumnProps) => {
   const { tasks, status, retry } = useTasksByStatus(
     projectId,
     statusConfig.value,
+    searchTerm,
   );
 
   return (
@@ -31,10 +34,10 @@ const StatusColumn = ({
             className="w-2 h-2 rounded-full shrink-0"
             style={{ backgroundColor: statusConfig.dot }}
           />
-          <span className="text-neutral-high text-[12px] font-[700] uppercase tracking-wide">
+          <span className="text-neutral-high text-[12px] font-bold uppercase tracking-wide">
             {statusConfig.label}
           </span>
-          <span className="text-[#64748B] text-[11px] font-[700] bg-[#F1F3FF] rounded-full px-2 py-0.5">
+          <span className="text-[#64748B] text-[11px] font-bold bg-surface-low rounded-full px-2 py-0.5">
             {tasks.length}
           </span>
         </div>
@@ -55,18 +58,18 @@ const StatusColumn = ({
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="animate-pulse h-20 rounded-lg bg-[#F1F3FF]"
+              className="animate-pulse h-20 rounded-lg bg-surface-low"
             />
           ))}
         </div>
       )}
 
       {status === 'error' && (
-        <div className="flex flex-col items-center gap-2 rounded-lg bg-[#F1F3FF] p-4">
-          <p className="text-error text-[12px] font-[500]">Failed to load</p>
+        <div className="flex flex-col items-center gap-2 rounded-lg bg-surface-low p-4">
+          <p className="text-error text-[12px] font-medium">Failed to load</p>
           <button
             onClick={retry}
-            className="text-[#003D9B] text-[12px] font-[600] underline"
+            className="text-primary text-[12px] font-semibold underline"
           >
             Retry
           </button>
@@ -82,6 +85,11 @@ const StatusColumn = ({
               onClick={() => onTaskClick(task.id)}
             />
           ))}
+          {tasks.length === 0 && (
+            <div className="text-center py-4 text-[#64748B] text-[12px]">
+              {searchTerm ? 'No matching tasks' : 'No tasks'}
+            </div>
+          )}
         </div>
       )}
     </div>

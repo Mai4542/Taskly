@@ -5,9 +5,15 @@ interface BoardViewProps {
   projectId: string;
   onAddTask: (status: string) => void;
   onTaskClick: (taskId: string) => void;
+  searchTerm?: string;
 }
 
-const BoardView = ({ projectId, onAddTask, onTaskClick }: BoardViewProps) => {
+const BoardView = ({
+  projectId,
+  onAddTask,
+  onTaskClick,
+  searchTerm = '',
+}: BoardViewProps) => {
   return (
     <div className="hidden md:flex flex-row gap-5 overflow-x-auto pb-4 -mx-12 px-12">
       {STATUS_COLUMNS.map((statusConfig) => (
@@ -17,6 +23,7 @@ const BoardView = ({ projectId, onAddTask, onTaskClick }: BoardViewProps) => {
           statusConfig={statusConfig}
           onAddTask={onAddTask}
           onTaskClick={onTaskClick}
+          searchTerm={searchTerm}
         />
       ))}
     </div>

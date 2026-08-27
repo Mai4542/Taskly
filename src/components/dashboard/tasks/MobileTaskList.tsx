@@ -6,15 +6,17 @@ interface MobileTaskListProps {
   projectId: string;
   onAddTask: () => void;
   onTaskClick: (taskId: string) => void;
+  searchTerm?: string;
 }
 
 const MobileTaskList = ({
   projectId,
   onAddTask,
   onTaskClick,
+  searchTerm = '',
 }: MobileTaskListProps) => {
   const { tasks, status, retry, totalCount, loadMore, loadingMore, hasMore } =
-    useProjectTasks(projectId);
+    useProjectTasks(projectId, searchTerm);
 
   return (
     <div className="md:hidden flex flex-col gap-3">
@@ -62,7 +64,7 @@ const MobileTaskList = ({
           ))}
           {tasks.length === 0 && (
             <div className="py-10 text-center text-neutral-medium text-sm">
-              No tasks yet.
+              {searchTerm ? 'No matching tasks found.' : 'No tasks yet.'}
             </div>
           )}
 
