@@ -46,6 +46,11 @@ export interface TaskListItem {
   } | null;
 }
 
+export interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
 export interface TaskDetails extends Task {
   task_id: string;
   epic?: {
@@ -66,6 +71,16 @@ export interface TaskDetails extends Task {
     department: string | null;
     avatar_url?: string | null;
   } | null;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  totalCount: number;
+  currentRange: {
+    start: number;
+    end: number;
+  };
+  hasMore: boolean;
 }
 
 const AUTH_BASE_URL = import.meta.env.VITE_API_BASE_URL as string;
@@ -177,4 +192,47 @@ export const getTaskDetails = async (
   const data = await response.json();
   const list = (data ?? []) as TaskDetails[];
   return list.length > 0 ? list[0] : null;
+};
+
+export const getProjectTasksPaginated = async (
+  projectId: string,
+  { page = 1, limit = 10 }: PaginationParams = {},
+): Promise<PaginatedResponse<Task>> => {
+  const offset = (page - 1) * limit;
+  const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}&limit=${limit}&offset=${offset}`;
+  const response = await authorizedFetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Prefer: 'count=exact',
+    },
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message || `Failed to fetch epics (Status: ${response.status})`,
+    );
+  }
+  const contentRange = response.headers.get('Content-Range');
+  let totalCount = 0;
+  let currentRange = { start: 0, end: 0 };
+
+  if (contentRange) {
+    const matches = contentRange.match(/(\d+)-(\d+)\/(\d+|\*)/);
+    if (matches) {
+      currentRange = {
+        start: parseInt(matches[1]),
+        end: parseInt(matches[2]),
+      };
+      totalCount = matches[3] !== '*' ? parseInt(matches[3]) : 0;
+    }
+  }
+  const data: Task[] = await response.json();
+
+  return {
+    data: data ?? [],
+    totalCount,
+    currentRange,
+    hasMore: offset + limit < totalCount,
+  };
 };
