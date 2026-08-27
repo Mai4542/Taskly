@@ -1,4 +1,5 @@
 import { useProjectTasks } from '../../../hooks/useProjectTasks';
+import Pagination from '../../common/Pagination';
 import TaskListCard from './TaskListCard';
 
 interface MobileTaskListProps {
@@ -12,14 +13,15 @@ const MobileTaskList = ({
   onAddTask,
   onTaskClick,
 }: MobileTaskListProps) => {
-  const { tasks, status, retry } = useProjectTasks(projectId);
+  const { tasks, status, retry, totalCount, loadMore, loadingMore, hasMore } =
+    useProjectTasks(projectId);
 
   return (
     <div className="md:hidden flex flex-col gap-3">
       <button
         type="button"
         onClick={onAddTask}
-        className="w-full bg-[#003D9B] text-white text-[14px] font-[600] rounded-lg py-3 flex items-center justify-center gap-2"
+        className="w-full bg-primary text-white text-[14px] font-semibold rounded-lg py-3 flex items-center justify-center gap-2"
       >
         <span className="text-[16px] leading-none">+</span> Create Task
       </button>
@@ -29,20 +31,20 @@ const MobileTaskList = ({
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="animate-pulse h-24 rounded-lg bg-[#F1F3FF]"
+              className="animate-pulse h-24 rounded-lg bg-surface-low"
             />
           ))}
         </div>
       )}
 
       {status === 'error' && (
-        <div className="flex flex-col items-center gap-2 rounded-lg bg-[#F1F3FF] p-6">
-          <p className="text-error text-[13px] font-[500]">
+        <div className="flex flex-col items-center gap-2 rounded-lg bg-surface-low p-6">
+          <p className="text-error text-[13px] font-medium">
             Failed to load tasks
           </p>
           <button
             onClick={retry}
-            className="text-[#003D9B] text-[12px] font-[600] underline"
+            className="text-primary text-[12px] font-semibold underline"
           >
             Retry
           </button>
@@ -62,6 +64,21 @@ const MobileTaskList = ({
             <div className="py-10 text-center text-neutral-medium text-sm">
               No tasks yet.
             </div>
+          )}
+
+          {tasks.length > 0 && (
+            <Pagination
+              infiniteScroll
+              isMobile
+              currentPage={1}
+              totalPages={1}
+              totalCount={totalCount}
+              itemsLabel="tasks"
+              hasMore={hasMore}
+              loadingMore={loadingMore}
+              onLoadMore={loadMore}
+              onPageChange={() => {}}
+            />
           )}
         </>
       )}

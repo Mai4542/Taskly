@@ -108,7 +108,7 @@ export default function ProjectTasks() {
 
       <div className="flex flex-col md:flex-row md:justify-between md:items-end min-h-15 mb-6 gap-4">
         <div className="flex flex-col justify-between">
-          <h1 className="text-neutral-high font-[600] text-[30px] leading-[1.2]">
+          <h1 className="text-neutral-high font-semibold text-[30px] leading-[1.2]">
             Active Workboard
           </h1>
           <p className="hidden md:block text-[#64748B] text-[14px] leading-[1.4]">
@@ -127,7 +127,7 @@ export default function ProjectTasks() {
             <input
               type="text"
               placeholder="Search tasks..."
-              className="input-default w-full md:!w-64 pl-9"
+              className="input-default w-full md:w-64! pl-9"
             />
           </div>
 
