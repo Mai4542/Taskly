@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
-import { getProjectTasksByStatus } from '../services/tasks.service';
+import {
+  getProjectTasksByStatus,
+  searchProjectTasks,
+} from '../services/tasks.service';
 import type { TaskListItem } from '../services/tasks.service';
 
 type Status = 'loading' | 'error' | 'success';
@@ -7,6 +10,7 @@ type Status = 'loading' | 'error' | 'success';
 export function useTasksByStatus(
   projectId: string | undefined,
   taskStatus: string,
+  searchTerm: string = '',
 ) {
   const [tasks, setTasks] = useState<TaskListItem[]>([]);
   const [status, setStatus] = useState<Status>('loading');
@@ -15,14 +19,26 @@ export function useTasksByStatus(
     if (!projectId) return;
     setStatus('loading');
     try {
-      const data = await getProjectTasksByStatus(projectId, taskStatus);
+      let data: TaskListItem[];
+
+      if (searchTerm?.trim()) {
+        const result = await searchProjectTasks(projectId, {
+          page: 1,
+          limit: 100,
+          searchTerm: searchTerm.trim(),
+        });
+
+        data = result.data.filter((task) => task.status === taskStatus);
+      } else {
+        data = await getProjectTasksByStatus(projectId, taskStatus);
+      }
       setTasks(data);
       setStatus('success');
     } catch (err) {
       console.error(`Error fetching tasks for status ${taskStatus}:`, err);
       setStatus('error');
     }
-  }, [projectId, taskStatus]);
+  }, [projectId, taskStatus, searchTerm]);
 
   useEffect(() => {
     fetchTasks();

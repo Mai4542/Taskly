@@ -11,6 +11,7 @@ import BoardView from '../../components/dashboard/tasks/BoardView';
 import ListView from '../../components/dashboard/tasks/ListView';
 import MobileTaskList from '../../components/dashboard/tasks/MobileTaskList';
 import TaskDetailsModal from '../../components/dashboard/tasks/TaskDetailsModal';
+import { useDebouncedSearchParam } from '../../hooks/useSearchParam';
 
 interface OptionType {
   value: string;
@@ -57,6 +58,18 @@ export default function ProjectTasks() {
   const navigate = useNavigate();
   const { project } = useProject(projectId);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const {
+    searchInput,
+    setSearchInput,
+    urlSearchTerm,
+    isSearching,
+    clearSearch,
+  } = useDebouncedSearchParam({
+    paramKey: 'q',
+    pageKey: 'page',
+    delay: 400,
+  });
 
   const initialView =
     VIEW_OPTIONS.find((o) => o.value === searchParams.get('view')) ??
@@ -127,8 +140,19 @@ export default function ProjectTasks() {
             <input
               type="text"
               placeholder="Search tasks..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="input-default w-full md:w-64! pl-9"
             />
+            {isSearching && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <div className="hidden md:block">
@@ -151,6 +175,7 @@ export default function ProjectTasks() {
           projectId={projectId}
           onAddTask={handleAddTaskFromList}
           onTaskClick={setSelectedTaskId}
+          searchTerm={urlSearchTerm}
         />
       )}
 
@@ -159,6 +184,7 @@ export default function ProjectTasks() {
           projectId={projectId}
           onAddTask={handleAddTask}
           onTaskClick={setSelectedTaskId}
+          searchTerm={urlSearchTerm}
         />
       )}
 
@@ -168,9 +194,11 @@ export default function ProjectTasks() {
             projectId={projectId}
             onAddTask={handleAddTaskFromList}
             onTaskClick={setSelectedTaskId}
+            searchTerm={urlSearchTerm}
           />
         </div>
       )}
+
       <TaskDetailsModal
         projectId={projectId}
         taskId={selectedTaskId}

@@ -1,13 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { getProjectTasksPaginated } from '../services/tasks.service';
+import {
+  getProjectTasksPaginated,
+  searchProjectTasks,
+} from '../services/tasks.service';
 import type { TaskListItem } from '../services/tasks.service';
 
 type Status = 'loading' | 'error' | 'success';
 
 const DEFAULT_LIMIT = 10;
 
-export function useProjectTasks(projectId: string | undefined) {
-  const [tasks, setTasks] = useState<TaskListItem[]>([]); // ✅ TaskListItem[]
+export function useProjectTasks(
+  projectId: string | undefined,
+  searchTerm: string = '',
+) {
+  const [tasks, setTasks] = useState<TaskListItem[]>([]);
   const [status, setStatus] = useState<Status>('loading');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -29,12 +35,20 @@ export function useProjectTasks(projectId: string | undefined) {
       }
 
       try {
-        const response = await getProjectTasksPaginated(projectId, {
-          page,
-          limit: DEFAULT_LIMIT,
-        });
+        let response;
+        if (searchTerm?.trim()) {
+          response = await searchProjectTasks(projectId, {
+            page,
+            limit: DEFAULT_LIMIT,
+            searchTerm: searchTerm.trim(),
+          });
+        } else {
+          response = await getProjectTasksPaginated(projectId, {
+            page,
+            limit: DEFAULT_LIMIT,
+          });
+        }
 
-        // ✅ البيانات من الـ API هي TaskListItem[] بالفعل
         const taskListItems: TaskListItem[] = Array.isArray(response.data)
           ? response.data
           : [];
@@ -57,8 +71,12 @@ export function useProjectTasks(projectId: string | undefined) {
         isFetchingRef.current = false;
       }
     },
-    [projectId],
+    [projectId, searchTerm],
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   useEffect(() => {
     fetchTasks(1, false);
