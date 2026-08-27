@@ -18,6 +18,9 @@ interface PaginationProps {
   onNext?: () => void;
   onPrev?: () => void;
   onLoadMore?: () => void;
+  infiniteScroll?: boolean;
+  scrollContainerRef?: React.RefObject<HTMLElement>;
+  variant?: 'default' | 'compact' | 'simple';
 }
 
 export default function Pagination({
@@ -35,21 +38,25 @@ export default function Pagination({
   onNext,
   onPrev,
   onLoadMore,
+  infiniteScroll = false,
+  scrollContainerRef,
+  variant = 'default',
 }: PaginationProps) {
   const pages = usePaginationRange(currentPage, totalPages);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // للـ Mobile: تحميل تلقائي عند الوصول لآخر الصفحة
   useEffect(() => {
-    if (!isMobile || !hasMore || !onLoadMore) return;
-
+    if (!infiniteScroll || !onLoadMore) return;
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && hasMore && !loadingMore) {
           onLoadMore();
         }
       },
-      { rootMargin: '200px' },
+      {
+        root: scrollContainerRef?.current || null,
+        rootMargin: '200px',
+      },
     );
 
     if (sentinelRef.current) {
@@ -57,10 +64,9 @@ export default function Pagination({
     }
 
     return () => observer.disconnect();
-  }, [isMobile, hasMore, loadingMore, onLoadMore]);
+  }, [infiniteScroll, hasMore, loadingMore, onLoadMore, scrollContainerRef]);
 
-  // للـ Mobile
-  if (isMobile) {
+  if (infiniteScroll || (isMobile && infiniteScroll)) {
     return (
       <>
         <div ref={sentinelRef} className="h-1" />
@@ -78,11 +84,59 @@ export default function Pagination({
     );
   }
 
-  // للـ Desktop
+  if (isMobile) {
+    return (
+      <>
+        {loadingMore && (
+          <div className="flex justify-center py-4">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+          </div>
+        )}
+        {!hasMore && totalCount && (
+          <p className="text-center text-neutral-medium text-[13px] py-4">
+            Showing all {totalCount} {itemsLabel}
+          </p>
+        )}
+      </>
+    );
+  }
+
+  if (variant === 'simple') {
+    return (
+      <div className="flex items-center justify-end gap-3 px-4 py-3">
+        <button
+          type="button"
+          onClick={onPrev || (() => onPageChange(currentPage - 1))}
+          disabled={!hasPreviousPage}
+          aria-label="Previous page"
+          className="cursor-pointer flex h-6 w-6 items-center justify-center rounded text-neutral-medium disabled:cursor-not-allowed disabled:opacity-40 hover:bg-surface-low"
+        >
+          <Left size={6} color="#434654" />
+        </button>
+
+        <span className="text-[13px] text-neutral-medium">
+          Page {currentPage} of {totalPages}
+        </span>
+
+        <button
+          type="button"
+          onClick={onNext || (() => onPageChange(currentPage + 1))}
+          disabled={!hasNextPage}
+          aria-label="Next page"
+          className="cursor-pointer flex h-6 w-6 items-center justify-center rounded text-neutral-medium disabled:cursor-not-allowed disabled:opacity-40 hover:bg-surface-low"
+        >
+          <Right size={6} color="#434654" />
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
+    <div
+      className={`flex flex-col sm:flex-row items-center justify-between gap-3 ${variant === 'compact' ? 'mt-4' : 'mt-6'}`}
+    >
       <span className="text-sm text-neutral-medium">
-        Showing {itemsShown || totalPages * 6} of {totalCount} {itemsLabel}
+        Showing {itemsShown || currentPage * 10} of {totalCount} {itemsLabel}
       </span>
 
       <div className="flex items-center gap-1">
