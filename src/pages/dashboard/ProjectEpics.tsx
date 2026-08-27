@@ -6,7 +6,7 @@ import ErrorState from '../../components/common/ErrorState';
 import EpicCard from '../../components/dashboard/epics/EpicCard';
 import EpicsSkeleton from '../../components/dashboard/epics/EpicsSkeleton';
 import EpicsEmptyState from '../../components/dashboard/epics/EpicsEmptyState';
-import EpicsPagination from '../../components/dashboard/epics/EpicsPagination';
+import Pagination from '../../components/common/Pagination';
 import { useProjects } from '../../hooks/useProjects';
 import { APP_ROUTES } from '../../constants/router';
 import type { Epic } from '../../types/epic.type';
@@ -305,10 +305,17 @@ export default function ProjectEpicsPage() {
           </div>
 
           {!isMobile && totalPages > 1 && (
-            <EpicsPagination
+            <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
+              totalCount={totalCount}
+              itemsShown={epics.length}
+              itemsLabel="epics"
               onPageChange={(page) => updatePage(page, true)}
+              hasNextPage={currentPage < totalPages}
+              hasPreviousPage={currentPage > 1}
+              onNext={() => updatePage(currentPage + 1, true)}
+              onPrev={() => updatePage(currentPage - 1, true)}
             />
           )}
         </>

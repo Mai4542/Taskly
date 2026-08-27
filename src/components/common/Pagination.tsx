@@ -1,45 +1,47 @@
 import { useEffect, useRef } from 'react';
-import { Left } from '../../../components/icons/Left';
-import { Right } from '../../../components/icons/Right';
-import LoadingSpinner from '../../common/LoadingSpinner';
-import { usePaginationRange } from '../../../hooks/usePaginationRange';
+import { Left } from '../../components/icons/Left';
+import { Right } from '../../components/icons/Right';
+import { usePaginationRange } from '../../hooks/usePaginationRange';
 
-interface ProjectsPaginationProps {
-  isMobile: boolean;
+interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  totalCount: number;
-  itemsShown: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-  onNext: () => void;
-  onPrev: () => void;
-  onSetPage: (page: number) => void;
-  hasMore: boolean;
-  loadingMore: boolean;
-  onLoadMore: () => void;
+  totalCount?: number;
+  itemsShown?: number;
+  itemsLabel?: string;
+  isMobile?: boolean;
+  hasMore?: boolean;
+  loadingMore?: boolean;
+  hasNextPage?: boolean;
+  hasPreviousPage?: boolean;
+  onPageChange: (page: number) => void;
+  onNext?: () => void;
+  onPrev?: () => void;
+  onLoadMore?: () => void;
 }
 
-export default function ProjectsPagination({
-  isMobile,
+export default function Pagination({
   currentPage,
   totalPages,
   totalCount,
   itemsShown,
-  hasNextPage,
-  hasPreviousPage,
+  itemsLabel = 'items',
+  isMobile = false,
+  hasMore = false,
+  loadingMore = false,
+  hasNextPage = currentPage < totalPages,
+  hasPreviousPage = currentPage > 1,
+  onPageChange,
   onNext,
   onPrev,
-  onSetPage,
-  hasMore,
-  loadingMore,
   onLoadMore,
-}: ProjectsPaginationProps) {
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+}: PaginationProps) {
   const pages = usePaginationRange(currentPage, totalPages);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
 
+  // للـ Mobile: تحميل تلقائي عند الوصول لآخر الصفحة
   useEffect(() => {
-    if (!isMobile || !sentinelRef.current) return;
+    if (!isMobile || !hasMore || !onLoadMore) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -50,41 +52,46 @@ export default function ProjectsPagination({
       { rootMargin: '200px' },
     );
 
-    observer.observe(sentinelRef.current);
+    if (sentinelRef.current) {
+      observer.observe(sentinelRef.current);
+    }
+
     return () => observer.disconnect();
   }, [isMobile, hasMore, loadingMore, onLoadMore]);
 
+  // للـ Mobile
   if (isMobile) {
     return (
       <>
         <div ref={sentinelRef} className="h-1" />
         {loadingMore && (
           <div className="flex justify-center py-4">
-            <LoadingSpinner />
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
           </div>
         )}
-        {!hasMore && (
+        {!hasMore && totalCount && (
           <p className="text-center text-neutral-medium text-[13px] py-4">
-            Showing all {totalCount} projects
+            Showing all {totalCount} {itemsLabel}
           </p>
         )}
       </>
     );
   }
 
+  // للـ Desktop
   return (
     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-6">
-      <span className="body-md text-neutral-medium text-[13px]">
-        Showing {itemsShown} of {totalCount} active projects
+      <span className="text-sm text-neutral-medium">
+        Showing {itemsShown || totalPages * 6} of {totalCount} {itemsLabel}
       </span>
 
       <div className="flex items-center gap-1">
         <button
           type="button"
-          onClick={onPrev}
+          onClick={onPrev || (() => onPageChange(currentPage - 1))}
           disabled={!hasPreviousPage}
           aria-label="Previous page"
-          className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-low disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-low"
+          className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-medium disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-low"
         >
           <Left size={5} color="#434654" />
         </button>
@@ -93,7 +100,7 @@ export default function ProjectsPagination({
           page === '...' ? (
             <span
               key={`ellipsis-${index}`}
-              className="flex h-8 w-8 items-center justify-center text-neutral-medium body-md text-[13px]"
+              className="flex h-8 w-8 items-center justify-center text-neutral-medium text-[13px]"
             >
               ...
             </span>
@@ -101,10 +108,10 @@ export default function ProjectsPagination({
             <button
               key={page}
               type="button"
-              onClick={() => onSetPage(page as number)}
-              className={`flex h-8 w-8 items-center justify-center rounded-md body-md text-[13px] ${
+              onClick={() => onPageChange(page as number)}
+              className={`flex h-8 w-8 items-center justify-center rounded-md text-[13px] ${
                 currentPage === page
-                  ? 'bg-primary-container text-white'
+                  ? 'bg-primary text-white'
                   : 'text-neutral-medium hover:bg-surface-low'
               }`}
             >
@@ -115,7 +122,7 @@ export default function ProjectsPagination({
 
         <button
           type="button"
-          onClick={onNext}
+          onClick={onNext || (() => onPageChange(currentPage + 1))}
           disabled={!hasNextPage}
           aria-label="Next page"
           className="flex h-8 w-8 items-center justify-center rounded-md text-neutral-medium disabled:cursor-not-allowed disabled:opacity-50 hover:bg-surface-low"

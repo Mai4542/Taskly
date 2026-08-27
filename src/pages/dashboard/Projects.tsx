@@ -7,7 +7,7 @@ import ProjectCard from '../../components/dashboard/projects/ProjectCard';
 import ProjectsSkeleton from '../../components/dashboard/projects/ProjectsSkeleton';
 import ProjectsEmptyState from '../../components/dashboard/projects/ProjectsEmptyState';
 import ErrorState from '../../components/common/ErrorState';
-import ProjectsPagination from '../../components/dashboard/projects/ProjectsPagination';
+import Pagination from '../../components/common/Pagination';
 import { APP_ROUTES } from '../../constants/router';
 import { Add2 } from '../../components/icons/Add2';
 import { Add } from '../../components/icons/Add';
@@ -152,20 +152,21 @@ export default function Projects() {
           </div>
 
           <div className="relative bottom-2">
-            <ProjectsPagination
+            <Pagination
               isMobile={isMobile}
               currentPage={currentPage}
               totalPages={totalPages}
               totalCount={totalCount}
               itemsShown={projects.length}
-              hasNextPage={hasNextPage}
-              hasPreviousPage={hasPreviousPage}
+              onPageChange={setPage}
               onNext={nextPage}
               onPrev={prevPage}
-              onSetPage={setPage}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
               hasMore={hasMore}
               loadingMore={loadingMore}
               onLoadMore={loadMore}
+              itemsLabel="active projects"
             />
           </div>
         </>
