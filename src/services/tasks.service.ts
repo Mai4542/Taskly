@@ -197,7 +197,7 @@ export const getTaskDetails = async (
 export const getProjectTasksPaginated = async (
   projectId: string,
   { page = 1, limit = 10 }: PaginationParams = {},
-): Promise<PaginatedResponse<Task>> => {
+): Promise<PaginatedResponse<TaskListItem>> => {
   const offset = (page - 1) * limit;
   const url = `${REST_BASE_URL}/project_tasks?project_id=eq.${projectId}&limit=${limit}&offset=${offset}`;
   const response = await authorizedFetch(url, {
@@ -227,8 +227,7 @@ export const getProjectTasksPaginated = async (
       totalCount = matches[3] !== '*' ? parseInt(matches[3]) : 0;
     }
   }
-  const data: Task[] = await response.json();
-
+  const data: TaskListItem[] = await response.json();
   return {
     data: data ?? [],
     totalCount,
