@@ -44,5 +44,26 @@ export function useTasksByStatus(
     fetchTasks();
   }, [fetchTasks]);
 
-  return { tasks, status, retry: fetchTasks };
+  const removeTaskLocally = useCallback(
+    (taskId: string): TaskListItem | undefined => {
+      const removed = tasks.find((t) => t.id === taskId);
+      if (!removed) return undefined;
+
+      setTasks((prev) => prev.filter((t) => t.id !== taskId));
+      return removed;
+    },
+    [tasks],
+  );
+
+  const addTaskLocally = useCallback((task: TaskListItem) => {
+    setTasks((prev) => [task, ...prev]);
+  }, []);
+
+  return {
+    tasks,
+    status,
+    retry: fetchTasks,
+    addTaskLocally,
+    removeTaskLocally,
+  };
 }

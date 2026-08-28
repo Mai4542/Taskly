@@ -1,9 +1,19 @@
+import { useEffect } from 'react';
+import { useDroppable } from '@dnd-kit/react';
 import { useTasksByStatus } from '../../../hooks/useTasksByStatus';
 import TaskCard from './TaskCard';
 import type { STATUS_COLUMNS } from '../../../constants/taskStatus';
+import type { TaskListItem } from '../../../services/tasks.service';
 import AddNewTaskButton from '../../common/AddNewTaskButton';
 
 type StatusConfig = (typeof STATUS_COLUMNS)[number];
+
+// Exposed to BoardView so it can move a task between columns' local
+// state without each column knowing about the others.
+export interface ColumnApi {
+  addTaskLocally: (task: TaskListItem) => void;
+  removeTaskLocally: (taskId: string) => TaskListItem | undefined;
+}
 
 interface StatusColumnProps {
   projectId: string;
@@ -11,6 +21,7 @@ interface StatusColumnProps {
   onAddTask: (status: string) => void;
   onTaskClick: (taskId: string) => void;
   searchTerm?: string;
+  registerColumnApi?: (status: string, api: ColumnApi | null) => void;
 }
 
 const StatusColumn = ({
@@ -19,12 +30,27 @@ const StatusColumn = ({
   onAddTask,
   onTaskClick,
   searchTerm = '',
+  registerColumnApi,
 }: StatusColumnProps) => {
-  const { tasks, status, retry } = useTasksByStatus(
-    projectId,
+  const { tasks, status, retry, addTaskLocally, removeTaskLocally } =
+    useTasksByStatus(projectId, statusConfig.value, searchTerm);
+
+  const { ref: dropRef, isDropTarget } = useDroppable({
+    id: statusConfig.value,
+  });
+
+  useEffect(() => {
+    registerColumnApi?.(statusConfig.value, {
+      addTaskLocally,
+      removeTaskLocally,
+    });
+    return () => registerColumnApi?.(statusConfig.value, null);
+  }, [
+    registerColumnApi,
     statusConfig.value,
-    searchTerm,
-  );
+    addTaskLocally,
+    removeTaskLocally,
+  ]);
 
   return (
     <div className="flex flex-col gap-3 w-72 shrink-0">
@@ -77,11 +103,19 @@ const StatusColumn = ({
       )}
 
       {status === 'success' && (
-        <div className="flex flex-col gap-3">
+        <div
+          ref={dropRef}
+          className={`flex flex-col gap-3 rounded-lg transition-colors ${
+            isDropTarget
+              ? 'bg-[#E0E8FF66] outline-2 outline-dashed outline-[#003D9B]'
+              : ''
+          }`}
+        >
           {tasks.map((task) => (
             <TaskCard
               key={task.id}
               task={task}
+              status={statusConfig.value}
               onClick={() => onTaskClick(task.id)}
             />
           ))}
