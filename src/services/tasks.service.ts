@@ -295,3 +295,26 @@ export const searchProjectTasks = async (
     hasMore: offset + limit < totalCount,
   };
 };
+
+export const updateTaskStatus = async (
+  taskId: string,
+  status: TaskStatus,
+): Promise<void> => {
+  const url = `${REST_BASE_URL}/tasks?id=eq.${taskId}`;
+
+  const response = await authorizedFetch(url, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      errorData.message ||
+        `Failed to update task status (Status: ${response.status})`,
+    );
+  }
+};
